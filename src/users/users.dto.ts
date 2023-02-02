@@ -28,6 +28,7 @@ export class UserCreateDto {
 export class UserUpdateDto {
   @IsString()
   oldPassword: string;
+  
   @IsString()
   newPassword: string;
 }

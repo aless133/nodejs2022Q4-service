@@ -5,7 +5,7 @@ import { UsersService } from './users.service';
 import { Get, Post, Put, Param, Body, UsePipes, ParseUUIDPipe } from '@nestjs/common';
 
 @Controller('user')
-@UsePipes(new ValidationPipe({ transform: true, whitelist: true, forbidNonWhitelisted: true }))
+// @UsePipes(new ValidationPipe({ transform: true, whitelist: true, forbidNonWhitelisted: true }))
 export class UsersController extends CrudController<User, UserCreateDto, UserUpdateDto> {
     
     constructor(readonly dataService: UsersService) {
@@ -17,7 +17,7 @@ export class UsersController extends CrudController<User, UserCreateDto, UserUpd
       return super.create(data);
     }
     
-    @Put()
+    @Put(':id')
     update(@Param('id', ParseUUIDPipe) id: string, @Body() data: UserUpdateDto): User {
       return super.update(id, data);
     }
