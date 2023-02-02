@@ -1,21 +1,50 @@
-import { Controller, Get, Param, UsePipes, ValidationPipe  } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Delete,
+  Put,
+  Patch,
+  Param,
+  Body,
+  UsePipes,
+  ValidationPipe,
+  ParseUUIDPipe,
+  UseInterceptors, ClassSerializerInterceptor,
+  HttpCode,
+  HttpStatus
+} from '@nestjs/common';
+import console from 'console';
 
 @Controller()
-export abstract class CrudController<T> {
-    
-    abstract getTable():string;
-    dataService: any;
+@UseInterceptors(ClassSerializerInterceptor)
+export abstract class CrudController<T, CreateT, UpdateT> {
+  dataService: any;
 
-    @Get()
-    getAll(): T[] {
-        console.log('CrudController.getall',this.getTable());
-        const qqq = this.dataService.getAll(this.getTable());
-        console.log(qqq);
-        return qqq;
-    }
+  @Get()
+  getAll(): T[] {
+    return this.dataService.getAll();
+  }
 
-    @Get()
-    get(@Param('id') id: string): T {
-        return this.dataService.get(this.getTable(),id).data;
-    }
+  @Get(':id')
+  get(@Param('id', ParseUUIDPipe) id: string): T {
+    return this.dataService.get(id);
+  }
+
+// @UsePipes(new ValidationPipe({ transform: true, whitelist: true, forbidNonWhitelisted: true }))
+  @Post()
+  create(@Body() data: CreateT): T {
+    return this.dataService.create(data);
+  }
+
+  @Put(':id')
+  update(@Param('id', ParseUUIDPipe) id: string, @Body() data: UpdateT): T {
+    return this.dataService.update(id, data);
+  }
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  delete(@Param('id', ParseUUIDPipe) id: string): T {
+    return this.dataService.delete(id);
+  }
 }

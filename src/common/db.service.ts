@@ -1,82 +1,57 @@
-import { Injectable } from '@nestjs/common';
-import {
-  version as uuidVersion,
-  validate as uuidValidate,
-  v4 as uuidv4,
-} from 'uuid';
-import { User } from 'src/users/users.dto';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { v4 as uuidv4 } from 'uuid';
+import { User, UserCreateDto } from 'src/users/users.dto';
+
+type Entity = User;
+type CreateEntity = UserCreateDto;
+
+const classes = {
+  users: User,
+};
 
 interface Database {
   users: Record<string, User>;
 }
-const user1 = new User();
-user1.login = '123';
+
+const database: Database = {
+  users: {},
+};
 
 @Injectable()
 export class DBService {
-  database: Database = {
-    users: {
-      qqq: user1,
-    },
-  };
-
   getAll(table: string) {
-    return {
-      data: Object.keys(this.database[table]).map(
-        (key) => this.database[table][key],
-      ),
-    };
+    return Object.keys(database[table]).map((key) => new classes[table](database[table][key]));
   }
 
-  /*
-  get({ params: { userId } }) {
-    if (!userId) {
-      return { err: { code: EDbErrors.INVALID_DATA, message: "No userId" } };
-    } else if (!uuidValidateV4(userId)) {
-      return { err: { code: EDbErrors.INVALID_DATA, message: "Invalid userId" } };
-    } else if (!database[userId]) {
-      return { err: { code: EDbErrors.NOT_FOUND, message: "User not found" } };
+  get(table: string, id: string) {
+    if (!database[table][id]) {
+      throw new NotFoundException();
     } else {
-      return { data: database[userId] };
+      return new classes[table](database[table][id]);
     }
   }
 
-  create({ data }) {
-    if (!data || !isValidUserData(data)) {
-      return { err: { code: EDbErrors.INVALID_DATA, message: "Invalid user data" } };
+  create(table: string, data: Entity) {
+    const id = uuidv4();
+    database[table][id] = { ...data, id };
+    return new classes[table](database[table][id]);
+  }
+
+  update(table: string, id: string, data: Partial<Entity>) {
+    if (!database[table][id]) {
+      throw new NotFoundException();
     } else {
-      const userId = uuidv4();
-      database[userId] = { ...data, id: userId };
-      return { data: database[userId] };
+      database[table][id] = { ...database[table][id], ...data };
+      return new classes[table](database[table][id]);
     }
   }
 
-  update({ params: { userId }, data }) {
-    if (!userId) {
-      return { err: { code: EDbErrors.INVALID_DATA, message: "No userId" } };
-    } else if (!uuidValidateV4(userId)) {
-      return { err: { code: EDbErrors.INVALID_DATA, message: "Invalid userId" } };
-    } else if (!data || !isValidUserData(data)) {
-      return { err: { code: EDbErrors.INVALID_DATA, message: "Invalid user data" } };
-    } else if (!database[userId]) {
-      return { err: { code: EDbErrors.NOT_FOUND, message: "User not found" } };
+  delete(table: string, id: string) {
+    if (!database[table][id]) {
+      throw new NotFoundException();
     } else {
-      database[userId] = { ...data, id: userId };
-      return { data: database[userId] };
-    }
-  }
-
-  delete({ params: { userId } }) {
-    if (!userId) {
-      return { err: { code: EDbErrors.INVALID_DATA, message: "No userId" } };
-    } else if (!uuidValidateV4(userId)) {
-      return { err: { code: EDbErrors.INVALID_DATA, message: "Invalid userId" } };
-    } else if (!database[userId]) {
-      return { err: { code: EDbErrors.NOT_FOUND, message: "User not found" } };
-    } else {
-      delete database[userId];
+      delete database[table][id];
       return {};
     }
   }
-  */
 }

@@ -216,7 +216,7 @@ describe('Users (e2e)', () => {
         .put(usersRoutes.update(randomUUID))
         .set(commonHeaders)
         .send({});
-
+console.log(response);
       expect(response.status).toBe(StatusCodes.BAD_REQUEST);
     });
 
