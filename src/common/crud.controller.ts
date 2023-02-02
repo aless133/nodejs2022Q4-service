@@ -4,7 +4,6 @@ import {
   Post,
   Delete,
   Put,
-  Patch,
   Param,
   Body,
   UsePipes,
@@ -46,7 +45,6 @@ export abstract class CrudController<T, CreateT, UpdateT> {
 
   @Put(':id')
   update(@Param('id', ParseUUIDPipe) id: string, @Body() data: UpdateT): T {
-    console.log('update',id,data);
     return this.dataService.update(id, data);    
   }
 

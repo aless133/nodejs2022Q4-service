@@ -1,10 +1,10 @@
 import { Injectable, ForbiddenException } from '@nestjs/common';
 import { DBService } from '../common/db.service';
-import { User, UserCreateDto, UserUpdateDto } from '../users/users.dto';
+import { User, UserCreateDto, UserUpdateDto } from './users.dto';
 import { CrudService } from 'src/common/crud.service';
 
 @Injectable()
-export class UsersService extends CrudService<User> {
+export class UsersService extends CrudService<User, UserCreateDto> {
   constructor(readonly dbService: DBService) {
     super(dbService);
   }
@@ -20,7 +20,7 @@ export class UsersService extends CrudService<User> {
     return this.dbService.create('users', user);
   }
 
-  update(id: string, userUpdate: UserUpdateDto): User {
+  updatePassword(id: string, userUpdate: UserUpdateDto): User {
     const user = this.dbService.get('users', id);
     if (user.password == userUpdate.oldPassword)
       return this.dbService.update('users', id, {
@@ -33,7 +33,7 @@ export class UsersService extends CrudService<User> {
     }
   }
 
-  delete(id: string) {
-    return this.dbService.delete('users', id);
-  }  
+  // delete(id: string) {
+  //   return this.dbService.delete('users', id);
+  // }  
 }
