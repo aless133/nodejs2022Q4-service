@@ -3,27 +3,31 @@ import { v4 as uuidv4 } from 'uuid';
 import { User, UserCreateDto } from 'src/users/users.dto';
 import { Track, TrackDto } from 'src/tracks/tracks.dto';
 import { Artist, ArtistDto } from 'src/artists/artists.dto';
+import { Album, AlbumDto } from 'src/albums/albums.dto';
 
-type Entity = User | Track | Artist;
-type CreateEntity = Partial<Omit<Entity, 'id'>>;
+type Entity = User | Track | Artist | Album;
+type CreateEntity = Omit<Entity, 'id'>;
 // type CreateEntity = UserCreateDto | TrackDto | ArtistDto;
 
 const classes = {
   users: User,
   tracks: Track,
   artists: Artist,
+  albums: Album,
 };
 
 interface Database {
   users: Record<string, User>;
   tracks: Record<string, Track>;
   artists: Record<string, Artist>;
+  albums: Record<string, Album>;
 }
 
 const database: Database = {
   users: {},
   tracks: {},
   artists: {},
+  albums: {},
 };
 
 @Injectable()
@@ -52,7 +56,7 @@ export class DBService {
     return new classes[table](database[table][id]);
   }
 
-  update(table: string, id: string, data: Partial<Entity>) {
+  update(table: string, id: string, data: Partial<CreateEntity>) {
     if (!database[table][id]) {
       throw new NotFoundException();
     } else {

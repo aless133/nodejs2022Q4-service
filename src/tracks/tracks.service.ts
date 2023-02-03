@@ -14,14 +14,4 @@ export class TracksService extends CrudService<Track, UserCreateDto> {
     return 'tracks';
   }
 
-  // create(trackCreate: TrackDto): Track {
-  //   const track = new Track(trackCreate);
-  //   return this.dbService.create('tracks', track);
-  // }
-
-  // update(id: string, trackUpdate: TrackDto): Track {
-  //   return this.dbService.update('tracks', id, trackUpdate); 
-  // }
-
- 
 }

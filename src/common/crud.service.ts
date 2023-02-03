@@ -2,12 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { DBService } from './db.service';
 
 @Injectable()
-export class CrudService<T, CreateT> {
+export abstract class CrudService<T, CreateT> {
   constructor(readonly dbService: DBService) {}
 
-  getTable(): string {
-    return '';
-  };
+  abstract getTable(): string;
 
   getAll(): T[] {
     return this.dbService.getAll(this.getTable());
