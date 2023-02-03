@@ -4,10 +4,15 @@ import { User, UserCreateDto } from 'src/users/users.dto';
 import { Track, TrackDto } from 'src/tracks/tracks.dto';
 import { Artist, ArtistDto } from 'src/artists/artists.dto';
 import { Album, AlbumDto } from 'src/albums/albums.dto';
+import { Favs } from 'src/favs/favs.dto';
+import { isArray } from 'class-validator';
 
 type Entity = User | Track | Artist | Album;
 type CreateEntity = Omit<Entity, 'id'>;
 // type CreateEntity = UserCreateDto | TrackDto | ArtistDto;
+// type Table = 'users' | 'tracks' | 'artists' | 'albums';
+type Table = string;
+type FavsTable = string; //'tracks' | 'artists' | 'albums';
 
 const classes = {
   users: User,
@@ -21,6 +26,12 @@ interface Database {
   tracks: Record<string, Track>;
   artists: Record<string, Artist>;
   albums: Record<string, Album>;
+  favs: {
+    artists: string[],
+    albums: string[],
+    tracks: string[],
+  }
+;
 }
 
 const database: Database = {
@@ -28,21 +39,33 @@ const database: Database = {
   tracks: {},
   artists: {},
   albums: {},
+  favs: {
+    artists: [],
+    albums: [],
+    tracks: [],
+  },
 };
 
 @Injectable()
 export class DBService {
-  getAll(table: string) {
+  getAll(table: Table) {
     return Object.keys(database[table]).map((key) => new classes[table](database[table][key]));
   }
 
-  getList(table: string, field: string, find: string | number) {
-    return Object.keys(database[table])
-      .filter((key) => database[table][key][field] === find)
-      .map((key) => new classes[table](database[table][key]));
+  getList(table: Table, field: string, find: string | number | string[] | number[]) {
+    if (isArray(find)) {
+      const castedFind = find as (string | number)[];
+      return Object.keys(database[table])
+        .filter((key) => castedFind.includes(database[table][key][field]))
+        .map((key) => new classes[table](database[table][key]));
+    }
+    else 
+      return Object.keys(database[table])
+        .filter((key) => database[table][key][field] === find)
+        .map((key) => new classes[table](database[table][key]));
   }
 
-  get(table: string, id: string) {
+  get(table: Table, id: string) {
     if (!database[table][id]) {
       throw new NotFoundException();
     } else {
@@ -50,13 +73,13 @@ export class DBService {
     }
   }
 
-  create(table: string, data: CreateEntity) {
+  create(table: Table, data: CreateEntity) {
     const id = uuidv4();
     database[table][id] = { ...data, id };
     return new classes[table](database[table][id]);
   }
 
-  update(table: string, id: string, data: Partial<CreateEntity>) {
+  update(table: Table, id: string, data: Partial<CreateEntity>) {
     if (!database[table][id]) {
       throw new NotFoundException();
     } else {
@@ -65,7 +88,7 @@ export class DBService {
     }
   }
 
-  delete(table: string, id: string) {
+  delete(table: Table, id: string) {
     if (!database[table][id]) {
       throw new NotFoundException();
     } else {
@@ -73,4 +96,27 @@ export class DBService {
       return {};
     }
   }
+
+  //////// FAVS //////////
+
+  getFavs(table: FavsTable): string[] {
+    return database.favs[table];
+  }
+
+  setFavs(table: FavsTable, favs: string[]) {
+    return (database.favs[table] = favs);
+  }
+
+  addFavs(table: FavsTable, fav: string) {
+    database.favs[table].push(fav);
+    return database.favs[table];
+  }
+
+  deleteFavs(table: FavsTable, fav: string) {
+    const i = database.favs[table].indexOf(fav);
+    if (i>-1)
+      database.favs[table].splice(i,1);
+    return database.favs[table];
+  }
+
 }
