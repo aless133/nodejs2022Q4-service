@@ -3,6 +3,7 @@ import { CrudController } from '../common/crud.controller';
 import { User, UserCreateDto, UserUpdateDto } from './users.dto'
 import { UsersService } from './users.service';
 import { Get, Post, Put, Param, Body, UsePipes, ParseUUIDPipe } from '@nestjs/common';
+import { ApiOkResponse, ApiExtraModels } from '@nestjs/swagger';
 
 @Controller('user')
 // @UsePipes(new ValidationPipe({ transform: true, whitelist: true, forbidNonWhitelisted: true }))
@@ -12,6 +13,11 @@ export class UsersController extends CrudController<User, UserCreateDto, UserUpd
         super();
     }
 
+    // getClass() {
+    //   return User;
+    // }
+
+    @ApiOkResponse((()=>this.getAllApiResponse())()) 
     @Post()
     create(@Body() data: UserCreateDto): User {
       return super.create(data);

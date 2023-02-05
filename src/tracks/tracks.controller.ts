@@ -11,6 +11,10 @@ export class TracksController extends CrudController<Track, TrackDto, TrackDto> 
         super();
     }
 
+    getClass() {
+      return Track;
+    }    
+
     @Post()
     create(@Body() data: TrackDto): Track {
       return super.create(data);

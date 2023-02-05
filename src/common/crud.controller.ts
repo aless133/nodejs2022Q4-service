@@ -9,18 +9,26 @@ import {
   UsePipes,
   ValidationPipe,
   ParseUUIDPipe,
-  UseInterceptors, ClassSerializerInterceptor,
+  UseInterceptors,
+  ClassSerializerInterceptor,
   HttpCode,
-  HttpStatus
+  HttpStatus,
 } from '@nestjs/common';
 // import { validate } from 'class-validator';
+import { ApiOkResponse, ApiExtraModels } from '@nestjs/swagger';
+import { User } from 'src/users/users.dto';
 
 @Controller()
 @UseInterceptors(ClassSerializerInterceptor)
 // @UsePipes(new ValidationPipe({ transform: true, whitelist: true, forbidNonWhitelisted: true }))
 export abstract class CrudController<T, CreateT, UpdateT> {
   dataService: any;
+  abstract getAllApiResponse();
 
+  getAllResponse = this.getAllApiResponse.bind(this);
+  @ApiOkResponse(this.getAllResponse)    
+
+  // @ApiOkResponse((()=>this.getAllApiResponse())())  
   @Get()
   getAll(): T[] {
     return this.dataService.getAll();
@@ -45,7 +53,7 @@ export abstract class CrudController<T, CreateT, UpdateT> {
 
   @Put(':id')
   update(@Param('id', ParseUUIDPipe) id: string, @Body() data: UpdateT): T {
-    return this.dataService.update(id, data);    
+    return this.dataService.update(id, data);
   }
 
   @Delete(':id')
@@ -53,4 +61,17 @@ export abstract class CrudController<T, CreateT, UpdateT> {
   delete(@Param('id', ParseUUIDPipe) id: string): T {
     return this.dataService.delete(id);
   }
+}
+
+
+function MyDecorator(param: string) {
+  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+    console.log('MyDecorator called with param:', param);
+  };
+}
+
+class MyClass {
+  static param = "something"
+  @Decorator(MyClass.param)
+  myMethod() {}
 }
