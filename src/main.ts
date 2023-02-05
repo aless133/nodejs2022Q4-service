@@ -5,14 +5,15 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 
+import { parse as yamlParse } from 'yaml';
 import { readFile } from 'fs/promises';
-import { join } from 'path';
 import { SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  const document = JSON.parse((await readFile(join(process.cwd(), 'doc/api.json'))).toString('utf-8'));
+  const file = await readFile('./doc/api.yaml', 'utf8');
+  const document = yamlParse(file);
   SwaggerModule.setup('doc', app, document);
 
   app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true, forbidNonWhitelisted: true }));
