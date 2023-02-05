@@ -1,17 +1,9 @@
-import { IsString, IsInt, IsOptional } from 'class-validator';
+import { IsString, IsInt, IsOptional, IsNotEmpty, IsPositive, IsUUID } from 'class-validator';
 
 export class Album {
-  @IsString()
   id: string; // uuid v4
-
-  @IsString()
   name: string;
-
-  @IsInt()
   year: number;
-
-  @IsString()
-  @IsOptional()
   artistId: string | null; // refers to Artist
 
   constructor(partial: Partial<Album>) {
@@ -21,12 +13,14 @@ export class Album {
 
 export class AlbumDto {
   @IsString()
+  @IsNotEmpty()
   name: string;
 
   @IsInt()
+  @IsPositive()
   year: number;
 
-  @IsString()
+  @IsUUID()
   @IsOptional()
   artistId: string | null; // refers to Artist
 }

@@ -1,4 +1,4 @@
-import { IsString} from 'class-validator';
+import { IsNotEmpty, IsString} from 'class-validator';
 import { Exclude } from 'class-transformer';
 
 export class User {
@@ -19,17 +19,21 @@ export class User {
 
 export class UserCreateDto {
   @IsString()
+  @IsNotEmpty()
   login: string;
 
   @IsString()
+  @IsNotEmpty()
   password: string;
 }
 
 export class UserUpdateDto {
   @IsString()
+  @IsNotEmpty()
   oldPassword: string;
   
   @IsString()
+  @IsNotEmpty()
   newPassword: string;
 }
 

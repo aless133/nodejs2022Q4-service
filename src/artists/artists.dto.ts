@@ -1,13 +1,8 @@
-import { IsString, IsBoolean } from 'class-validator';
+import { IsString, IsBoolean, IsNotEmpty } from 'class-validator';
 
 export class Artist {
-  @IsString()
   id: string; // uuid v4
-
-  @IsString()
   name: string;
-
-  @IsBoolean()
   grammy: boolean;
 
   constructor(partial: Partial<Artist>) {
@@ -17,8 +12,8 @@ export class Artist {
 
 export class ArtistDto {
   @IsString()
+  @IsNotEmpty()
   name: string;
-
   @IsBoolean()
   grammy: boolean;
 }

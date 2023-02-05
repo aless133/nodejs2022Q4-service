@@ -1,21 +1,10 @@
-import { IsString, IsInt, IsOptional } from 'class-validator';
+import { IsUUID, IsString, IsInt, IsOptional, IsNotEmpty, IsPositive } from 'class-validator';
 
 export class Track {
-  @IsString()
   id: string; // uuid v4
-
-  @IsString()
   name: string;
-
-  @IsString()
-  @IsOptional()
   artistId: string | null; // refers to Artist
-
-  @IsString()
-  @IsOptional()
   albumId: string | null; // refers to Album
-
-  @IsInt()
   duration: number; // integer number
 
   constructor(partial: Partial<Track>) {
@@ -25,17 +14,18 @@ export class Track {
 
 export class TrackDto {
   @IsString()
+  @IsNotEmpty()
   name: string;
 
-  @IsString()
+  @IsUUID()
   @IsOptional()
   artistId: string | null; // refers to Artist
 
-  @IsString()
+  @IsUUID()
   @IsOptional()
   albumId: string | null; // refers to Album
 
   @IsInt()
+  @IsPositive()
   duration: number; // integer number
 }
-
