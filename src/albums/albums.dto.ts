@@ -8,7 +8,7 @@ export class Album {
 
   constructor(partial: Partial<Album>) {
     Object.assign(this, partial);
-  }    
+  }
 }
 
 export class AlbumDto {
@@ -24,4 +24,3 @@ export class AlbumDto {
   @IsOptional()
   artistId: string | null; // refers to Artist
 }
-

@@ -7,7 +7,7 @@ export class Artist {
 
   constructor(partial: Partial<Artist>) {
     Object.assign(this, partial);
-  }    
+  }
 }
 
 export class ArtistDto {
@@ -17,4 +17,3 @@ export class ArtistDto {
   @IsBoolean()
   grammy: boolean;
 }
-

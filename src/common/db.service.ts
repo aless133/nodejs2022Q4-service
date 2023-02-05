@@ -27,11 +27,10 @@ interface Database {
   artists: Record<string, Artist>;
   albums: Record<string, Album>;
   favs: {
-    artists: string[],
-    albums: string[],
-    tracks: string[],
-  }
-;
+    artists: string[];
+    albums: string[];
+    tracks: string[];
+  };
 }
 
 const database: Database = {
@@ -58,8 +57,7 @@ export class DBService {
       return Object.keys(database[table])
         .filter((key) => castedFind.includes(database[table][key][field]))
         .map((key) => new classes[table](database[table][key]));
-    }
-    else 
+    } else
       return Object.keys(database[table])
         .filter((key) => database[table][key][field] === find)
         .map((key) => new classes[table](database[table][key]));
@@ -114,9 +112,7 @@ export class DBService {
 
   deleteFavs(table: FavsTable, fav: string) {
     const i = database.favs[table].indexOf(fav);
-    if (i>-1)
-      database.favs[table].splice(i,1);
+    if (i > -1) database.favs[table].splice(i, 1);
     return database.favs[table];
   }
-
 }

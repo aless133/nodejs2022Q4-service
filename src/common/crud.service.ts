@@ -12,7 +12,7 @@ export abstract class CrudService<T, CreateT> {
   }
 
   get(id: string): T {
-    return this.dbService.get(this.getTable(), id);    
+    return this.dbService.get(this.getTable(), id);
   }
 
   create(data: CreateT): T {
@@ -20,11 +20,10 @@ export abstract class CrudService<T, CreateT> {
   }
 
   update(id: string, data: Partial<T>): T {
-    return this.dbService.update(this.getTable(), id, data); 
-  }  
+    return this.dbService.update(this.getTable(), id, data);
+  }
 
   delete(id: string) {
     return this.dbService.delete(this.getTable(), id);
-  }  
-
+  }
 }

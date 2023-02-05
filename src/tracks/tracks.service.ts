@@ -13,5 +13,4 @@ export class TracksService extends CrudService<Track, UserCreateDto> {
   getTable() {
     return 'tracks';
   }
-
 }

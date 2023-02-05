@@ -29,11 +29,11 @@ export class UsersService extends CrudService<User, UserCreateDto> {
         updatedAt: Date.now(),
       });
     else {
-      throw new ForbiddenException;
+      throw new ForbiddenException();
     }
   }
 
   // delete(id: string) {
   //   return this.dbService.delete('users', id);
-  // }  
+  // }
 }

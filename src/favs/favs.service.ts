@@ -6,15 +6,14 @@ import { User, UserCreateDto } from 'src/users/users.dto';
 
 @Injectable()
 export class FavsService {
-
-  constructor(readonly dbService: DBService) { }
+  constructor(readonly dbService: DBService) {}
 
   getAll() {
     const all = {
-      artists: this.dbService.getList('artists','id',this.dbService.getFavs('artists')),
-      albums: this.dbService.getList('albums','id',this.dbService.getFavs('albums')),
-      tracks: this.dbService.getList('tracks','id',this.dbService.getFavs('tracks')),
-    }
+      artists: this.dbService.getList('artists', 'id', this.dbService.getFavs('artists')),
+      albums: this.dbService.getList('albums', 'id', this.dbService.getFavs('albums')),
+      tracks: this.dbService.getList('tracks', 'id', this.dbService.getFavs('tracks')),
+    };
     return all;
   }
 
@@ -23,15 +22,12 @@ export class FavsService {
     try {
       obj = this.dbService.get(table, id);
     } catch (err) {
-      if (err instanceof NotFoundException)
-        throw new UnprocessableEntityException();
-      else
-        throw err;
+      if (err instanceof NotFoundException) throw new UnprocessableEntityException();
+      else throw err;
     }
     if (obj) {
       const favs = this.dbService.getFavs(table);
-      if (!favs.includes(id))
-        this.dbService.addFavs(table, id);
+      if (!favs.includes(id)) this.dbService.addFavs(table, id);
     }
   }
 
@@ -39,11 +35,8 @@ export class FavsService {
     const obj = this.dbService.get(table, id);
     if (obj) {
       const favs = this.dbService.getFavs(table);
-      if (favs.includes(id))
-        this.dbService.deleteFavs(table, id);
-      else
-        throw new NotFoundException();
+      if (favs.includes(id)) this.dbService.deleteFavs(table, id);
+      else throw new NotFoundException();
     }
-  }  
-
+  }
 }

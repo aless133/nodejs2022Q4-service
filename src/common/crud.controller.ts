@@ -9,9 +9,10 @@ import {
   UsePipes,
   ValidationPipe,
   ParseUUIDPipe,
-  UseInterceptors, ClassSerializerInterceptor,
+  UseInterceptors,
+  ClassSerializerInterceptor,
   HttpCode,
-  HttpStatus
+  HttpStatus,
 } from '@nestjs/common';
 // import { validate } from 'class-validator';
 
@@ -45,7 +46,7 @@ export abstract class CrudController<T, CreateT, UpdateT> {
 
   @Put(':id')
   update(@Param('id', ParseUUIDPipe) id: string, @Body() data: UpdateT): T {
-    return this.dataService.update(id, data);    
+    return this.dataService.update(id, data);
   }
 
   @Delete(':id')

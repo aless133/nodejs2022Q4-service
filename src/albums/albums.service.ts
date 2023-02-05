@@ -18,6 +18,5 @@ export class AlbumsService extends CrudService<Album, UserCreateDto> {
     const tracks = this.dbService.getList('tracks', 'albumId', id);
     tracks.forEach((track) => this.dbService.update('tracks', track.id, { albumId: null }));
     return this.dbService.delete('albums', id);
-  }  
-
+  }
 }
