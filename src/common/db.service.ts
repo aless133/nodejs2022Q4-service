@@ -1,10 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
-import { User, UserCreateDto } from 'src/users/users.dto';
-import { Track, TrackDto } from 'src/tracks/tracks.dto';
-import { Artist, ArtistDto } from 'src/artists/artists.dto';
-import { Album, AlbumDto } from 'src/albums/albums.dto';
-import { Favs } from 'src/favs/favs.dto';
+import { User } from 'src/users/users.dto';
+import { Track } from 'src/tracks/tracks.dto';
+import { Artist } from 'src/artists/artists.dto';
+import { Album } from 'src/albums/albums.dto';
 import { isArray } from 'class-validator';
 
 type Entity = User | Track | Artist | Album;

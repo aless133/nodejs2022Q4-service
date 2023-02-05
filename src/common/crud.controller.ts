@@ -6,8 +6,6 @@ import {
   Put,
   Param,
   Body,
-  UsePipes,
-  ValidationPipe,
   ParseUUIDPipe,
   UseInterceptors,
   ClassSerializerInterceptor,

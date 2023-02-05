@@ -1,8 +1,7 @@
-import { Injectable, ForbiddenException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { DBService } from '../common/db.service';
 import { Artist, ArtistDto } from './artists.dto';
 import { CrudService } from 'src/common/crud.service';
-import { User, UserCreateDto } from 'src/users/users.dto';
 
 @Injectable()
 export class ArtistsService extends CrudService<Artist, ArtistDto> {

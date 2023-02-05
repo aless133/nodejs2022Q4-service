@@ -1,8 +1,5 @@
 import { Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 import { DBService } from '../common/db.service';
-// import { Album, AlbumDto } from './albums.dto';
-import { CrudService } from 'src/common/crud.service';
-import { User, UserCreateDto } from 'src/users/users.dto';
 
 @Injectable()
 export class FavsService {

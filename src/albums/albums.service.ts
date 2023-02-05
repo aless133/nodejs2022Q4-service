@@ -1,11 +1,10 @@
-import { Injectable, ForbiddenException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { DBService } from '../common/db.service';
 import { Album, AlbumDto } from './albums.dto';
 import { CrudService } from 'src/common/crud.service';
-import { User, UserCreateDto } from 'src/users/users.dto';
 
 @Injectable()
-export class AlbumsService extends CrudService<Album, UserCreateDto> {
+export class AlbumsService extends CrudService<Album, AlbumDto> {
   constructor(readonly dbService: DBService) {
     super(dbService);
   }

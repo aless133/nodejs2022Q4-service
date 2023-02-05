@@ -1,8 +1,7 @@
-import { Controller, ValidationPipe, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
+import { Controller, Post, Put, Param, Body, ParseUUIDPipe } from '@nestjs/common';
 import { CrudController } from '../common/crud.controller';
 import { Track, TrackDto } from './tracks.dto';
 import { TracksService } from './tracks.service';
-import { Post, Put, Param, Body, ParseUUIDPipe } from '@nestjs/common';
 
 @Controller('track')
 export class TracksController extends CrudController<Track, TrackDto, TrackDto> {
