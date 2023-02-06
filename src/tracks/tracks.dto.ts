@@ -1,4 +1,4 @@
-import { IsUUID, IsString, IsInt, IsOptional, IsNotEmpty, IsPositive } from 'class-validator';
+import { IsUUID, IsString, IsInt, IsNotEmpty, IsPositive, ValidateIf } from 'class-validator';
 
 export class Track {
   id: string; // uuid v4
@@ -17,12 +17,12 @@ export class TrackDto {
   @IsNotEmpty()
   name: string;
 
+  @ValidateIf((object, value) => value !== null)
   @IsUUID()
-  @IsOptional()
   artistId: string | null; // refers to Artist
-
+  
+  @ValidateIf((object, value) => value !== null)
   @IsUUID()
-  @IsOptional()
   albumId: string | null; // refers to Album
 
   @IsInt()
