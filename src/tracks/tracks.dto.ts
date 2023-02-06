@@ -20,7 +20,7 @@ export class TrackDto {
   @ValidateIf((object, value) => value !== null)
   @IsUUID()
   artistId: string | null; // refers to Artist
-  
+
   @ValidateIf((object, value) => value !== null)
   @IsUUID()
   albumId: string | null; // refers to Album
