@@ -1,5 +1,5 @@
 import { Injectable, ForbiddenException } from '@nestjs/common';
-import { DBService } from '../common/db.service';
+import { DBService } from 'src/db/db.service';
 import { User, UserCreateDto, UserUpdateDto } from './users.dto';
 import { CrudService } from 'src/common/crud.service';
 

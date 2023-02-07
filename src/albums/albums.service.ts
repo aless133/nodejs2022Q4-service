@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DBService } from '../common/db.service';
+import { DBService } from 'src/db/db.service';
 import { Album, AlbumDto } from './albums.dto';
 import { CrudService } from 'src/common/crud.service';
 

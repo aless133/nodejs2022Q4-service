@@ -1,10 +1,12 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { User } from 'src/users/users.dto';
 import { Track } from 'src/tracks/tracks.dto';
 import { Artist } from 'src/artists/artists.dto';
 import { Album } from 'src/albums/albums.dto';
 import { isArray } from 'class-validator';
+import { DataSource } from "typeorm";
+import { DSProvider } from './ds.provider';
 
 type Entity = User | Track | Artist | Album;
 type CreateEntity = Omit<Entity, 'id'>;
@@ -46,8 +48,14 @@ const database: Database = {
 
 @Injectable()
 export class DBService {
-  getAll(table: Table) {
-    return Object.keys(database[table]).map((key) => new classes[table](database[table][key]));
+
+  constructor(@Inject('DATA_SOURCE') private dataSource: DataSource) { 
+    const ur = new User({login:"u1",password:"p1",version:1,createdAt:1,updatedAt:1});
+    dataSource.manager.save(ur)
+  }
+
+  async getAll(table: Table) {
+    return await this.dataSource.manager.find(classes[table]);
   }
 
   getList(table: Table, field: string, find: string | number | string[] | number[]) {
