@@ -1,0 +1,16 @@
+services:
+  rest:
+    build: .
+    ports:
+      - "{$PORT}:{$PORT}"
+    environment:
+      - PORT={$PORT}
+
+  database:
+    build: ./database
+    ports:
+      - "{$POSTGRES_PORT}:{$POSTGRES_PORT}"
+    environment:
+      - POSTGRES_DB={$POSTGRES_DB}
+      - POSTGRES_USER={$POSTGRES_USER}
+      - POSTGRES_PASSWORD={$POSTGRES_PASSWORD}
