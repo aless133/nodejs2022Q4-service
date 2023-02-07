@@ -13,10 +13,10 @@ export class ArtistsService extends CrudService<Artist, ArtistDto> {
     return 'artists';
   }
 
-  delete(id: string) {
-    const tracks = this.dbService.getList('tracks', 'artistId', id);
+  async delete(id: string) {
+    const tracks = await this.dbService.getList('tracks', 'artistId', id);
     tracks.forEach((track) => this.dbService.update('tracks', track.id, { artistId: null }));
-    const albums = this.dbService.getList('albums', 'artistId', id);
+    const albums = await this.dbService.getList('albums', 'artistId', id);
     albums.forEach((album) => this.dbService.update('albums', album.id, { artistId: null }));
     return this.dbService.delete('artists', id);
   }

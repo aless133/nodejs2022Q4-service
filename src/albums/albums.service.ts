@@ -13,8 +13,8 @@ export class AlbumsService extends CrudService<Album, AlbumDto> {
     return 'albums';
   }
 
-  delete(id: string) {
-    const tracks = this.dbService.getList('tracks', 'albumId', id);
+  async delete(id: string) {
+    const tracks = await this.dbService.getList('tracks', 'albumId', id);
     tracks.forEach((track) => this.dbService.update('tracks', track.id, { albumId: null }));
     return this.dbService.delete('albums', id);
   }

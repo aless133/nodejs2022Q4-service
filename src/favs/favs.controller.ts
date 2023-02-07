@@ -7,7 +7,7 @@ export class FavsController {
   constructor(readonly dataService: FavsService) {}
 
   @Get()
-  getAll(): Favs {
+  getAll() {
     return this.dataService.getAll();
   }
 

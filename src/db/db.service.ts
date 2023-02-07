@@ -5,10 +5,11 @@ import { Track } from 'src/tracks/tracks.dto';
 import { Artist } from 'src/artists/artists.dto';
 import { Album } from 'src/albums/albums.dto';
 import { isArray } from 'class-validator';
-import { DataSource } from "typeorm";
+import { DataSource, Repository } from 'typeorm';
 import { DSProvider } from './ds.provider';
+import { Fav } from 'src/favs/favs.dto';
 
-type Entity = User | Track | Artist | Album;
+type Entity = User | Track | Artist | Album | Fav;
 type CreateEntity = Omit<Entity, 'id'>;
 // type CreateEntity = UserCreateDto | TrackDto | ArtistDto;
 // type Table = 'users' | 'tracks' | 'artists' | 'albums';
@@ -20,94 +21,93 @@ const classes = {
   tracks: Track,
   artists: Artist,
   albums: Album,
-};
-
-interface Database {
-  users: Record<string, User>;
-  tracks: Record<string, Track>;
-  artists: Record<string, Artist>;
-  albums: Record<string, Album>;
-  favs: {
-    artists: string[];
-    albums: string[];
-    tracks: string[];
-  };
-}
-
-const database: Database = {
-  users: {},
-  tracks: {},
-  artists: {},
-  albums: {},
-  favs: {
-    artists: [],
-    albums: [],
-    tracks: [],
-  },
+  favs: Fav,
 };
 
 @Injectable()
 export class DBService {
-
-  constructor(@Inject('DATA_SOURCE') private dataSource: DataSource) { 
-    const ur = new User({login:"u1",password:"p1",version:1,createdAt:1,updatedAt:1});
-    dataSource.manager.save(ur)
+  repos: Record<string, Repository<Entity>> = {};
+  constructor(@Inject('DATA_SOURCE') private dataSource: DataSource) {
+    const ur = new User({ login: 'u1', password: 'p1', version: 1, createdAt: 1, updatedAt: 1 });
+    dataSource.manager.save(ur);
+    Object.keys(classes).forEach((c) => {
+      this.repos[c] = this.dataSource.getRepository(classes[c]);
+    });
   }
 
   async getAll(table: Table) {
-    return await this.dataSource.manager.find(classes[table]);
+    return await this.repos[table].find();
   }
 
-  getList(table: Table, field: string, find: string | number | string[] | number[]) {
-    if (isArray(find)) {
-      const castedFind = find as (string | number)[];
-      return Object.keys(database[table])
-        .filter((key) => castedFind.includes(database[table][key][field]))
-        .map((key) => new classes[table](database[table][key]));
-    } else
-      return Object.keys(database[table])
-        .filter((key) => database[table][key][field] === find)
-        .map((key) => new classes[table](database[table][key]));
+  async getList(table: Table, field: string, find: string | number | string[] | number[]) {
+    return await this.repos[table].findBy({ [field]: find });
+    // if (isArray(find)) {
+    //   const castedFind = find as (string | number)[];
+    //   return Object.keys(database[table])
+    //     .filter((key) => castedFind.includes(database[table][key][field]))
+    //     .map((key) => new classes[table](database[table][key]));
+    // } else
+    //   return Object.keys(database[table])
+    //     .filter((key) => database[table][key][field] === find)
+    //     .map((key) => new classes[table](database[table][key]));
   }
 
-  get(table: Table, id: string) {
-    if (!database[table][id]) {
+  async get(table: Table, id: string): Promise<Entity> {
+    const entity = await this.repos[table].findOneBy({ id });
+    if (!entity) {
       throw new NotFoundException();
     } else {
-      return new classes[table](database[table][id]);
+      return entity;
     }
   }
 
-  create(table: Table, data: CreateEntity) {
-    const id = uuidv4();
-    database[table][id] = { ...data, id };
-    return new classes[table](database[table][id]);
+  async create(table: Table, data: CreateEntity) {
+    const entity = this.repos[table].create(data);
+    await this.repos[table].save(entity);
+    return entity;
   }
 
-  update(table: Table, id: string, data: Partial<CreateEntity>) {
-    if (!database[table][id]) {
+  async update(table: Table, id: string, data: Partial<CreateEntity>) {
+    const entity = await this.repos[table].findOneBy({ id });
+    if (!entity) {
       throw new NotFoundException();
     } else {
-      database[table][id] = { ...database[table][id], ...data };
-      return new classes[table](database[table][id]);
+      console.log(entity,data);
+      this.repos[table].merge(entity, data);
+      this.repos[table].save(entity);
+      return entity;
     }
   }
 
-  delete(table: Table, id: string) {
-    if (!database[table][id]) {
+  async delete(table: Table, id: string) {
+    const entity = await this.repos[table].findOneBy({ id });
+    if (!entity) {
       throw new NotFoundException();
     } else {
-      delete database[table][id];
+      this.repos[table].delete(entity);
       return {};
     }
   }
 
   //////// FAVS //////////
 
-  getFavs(table: FavsTable): string[] {
-    return database.favs[table];
+  async getFavs(table: FavsTable) {
+    return (await this.repos.favs.findBy({ table })).map((fav) => fav.id);
   }
 
+  async getFav(table: FavsTable, id: string) {
+    return await this.repos.favs.findOneBy({ table, id });
+  }
+
+  async addFav(table: FavsTable, id: string) {
+    return await this.repos.favs.insert({ table, id });
+  }
+
+  async deleteFav(table: FavsTable, id: string) {
+    return await this.repos.favs.delete({ table, id });
+  }
+
+  /*
   setFavs(table: FavsTable, favs: string[]) {
     return (database.favs[table] = favs);
   }
@@ -122,4 +122,5 @@ export class DBService {
     if (i > -1) database.favs[table].splice(i, 1);
     return database.favs[table];
   }
+  */
 }

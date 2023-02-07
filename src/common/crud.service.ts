@@ -11,15 +11,15 @@ export abstract class CrudService<T, CreateT> {
     return await this.dbService.getAll(this.getTable());
   }
 
-  get(id: string): T {
+  async get(id: string) {
     return this.dbService.get(this.getTable(), id);
   }
 
-  create(data: CreateT): T {
-    return this.dbService.create(this.getTable(), data);
+  async create(data: CreateT) {
+    return await this.dbService.create(this.getTable(), data);
   }
 
-  update(id: string, data: Partial<T>): T {
+  update(id: string, data: Partial<T>) {
     return this.dbService.update(this.getTable(), id, data);
   }
 

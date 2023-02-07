@@ -1,38 +1,39 @@
 import { Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 import { DBService } from 'src/db/db.service';
+import { Fav } from 'src/favs/favs.dto';
 
 @Injectable()
 export class FavsService {
   constructor(readonly dbService: DBService) {}
 
-  getAll() {
+  async getAll() {
     const all = {
-      artists: this.dbService.getList('artists', 'id', this.dbService.getFavs('artists')),
-      albums: this.dbService.getList('albums', 'id', this.dbService.getFavs('albums')),
-      tracks: this.dbService.getList('tracks', 'id', this.dbService.getFavs('tracks')),
+      artists: await this.dbService.getList('artists', 'id', await this.dbService.getFavs('artists')),
+      albums: await this.dbService.getList('albums', 'id', await this.dbService.getFavs('albums')),
+      tracks: await this.dbService.getList('tracks', 'id', await this.dbService.getFavs('tracks')),
     };
     return all;
   }
 
-  add(table: string, id: string) {
+  async add(table: string, id: string) {
     let obj;
     try {
-      obj = this.dbService.get(table, id);
+      obj = await this.dbService.get(table, id);
     } catch (err) {
       if (err instanceof NotFoundException) throw new UnprocessableEntityException();
       else throw err;
     }
     if (obj) {
-      const favs = this.dbService.getFavs(table);
-      if (!favs.includes(id)) this.dbService.addFavs(table, id);
+      const fav = await this.dbService.getFav(table, id);
+      if (!fav) this.dbService.addFav(table, id);
     }
   }
 
-  delete(table: string, id: string) {
-    const obj = this.dbService.get(table, id);
+  async delete(table: string, id: string) {
+    const obj = await this.dbService.get(table, id);
     if (obj) {
-      const favs = this.dbService.getFavs(table);
-      if (favs.includes(id)) this.dbService.deleteFavs(table, id);
+      const fav = await this.dbService.getFav(table, id);
+      if (fav) this.dbService.deleteFav(table, id);
       else throw new NotFoundException();
     }
   }

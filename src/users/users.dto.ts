@@ -16,10 +16,10 @@ export class User {
   @Column()
   version: number; // integer number, increments on update
 
-  @Column()
+  @Column({ type: 'int8' })
   createdAt: number; // timestamp of creation
 
-  @Column()
+  @Column({ type: 'int8' })
   updatedAt: number; // timestamp of last update
 
   constructor(partial: Partial<User>) {

@@ -5,6 +5,7 @@ import { User } from 'src/users/users.dto';
 import { Track } from 'src/tracks/tracks.dto';
 import { Artist } from 'src/artists/artists.dto';
 import { Album } from 'src/albums/albums.dto';
+import { Fav } from 'src/favs/favs.dto';
 
 if (typeof process.env.POSTGRES_PASSWORD == 'undefined') {
   dotenv.config();
@@ -34,7 +35,7 @@ export const DSProvider = {
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,
-      entities: [User, Track, Artist, Album],
+      entities: [User, Track, Artist, Album, Fav],
       migrations: ['dist/migrations/*.js'],
       migrationsRun: true,
     });
