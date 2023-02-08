@@ -20,9 +20,10 @@ export const dataSource = new DataSource({
   username: process.env.POSTGRES_USER,
   password: process.env.POSTGRES_PASSWORD,
   database: process.env.POSTGRES_DB,
-  entities: [User, Track, Artist, Album],
+  entities: [User, Track, Artist, Album, Fav],
   // migrations: ['src/migrations/*.ts'],
   // migrationsRun: true,
+  // logging: true,
 });
 
 export const DSProvider = {
@@ -38,6 +39,7 @@ export const DSProvider = {
       entities: [User, Track, Artist, Album, Fav],
       migrations: ['dist/migrations/*.js'],
       migrationsRun: true,
+      // logging: true,
     });
     return dataSource.initialize();
   }

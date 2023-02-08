@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
+import { ConsoleLogger } from '@nestjs/common/services';
 import { DBService } from 'src/db/db.service';
 import { Fav } from 'src/favs/favs.dto';
 
@@ -25,7 +26,8 @@ export class FavsService {
     }
     if (obj) {
       const fav = await this.dbService.getFav(table, id);
-      if (!fav) this.dbService.addFav(table, id);
+      if (!fav) 
+        return this.dbService.addFav(table, id);
     }
   }
 
@@ -33,7 +35,7 @@ export class FavsService {
     const obj = await this.dbService.get(table, id);
     if (obj) {
       const fav = await this.dbService.getFav(table, id);
-      if (fav) this.dbService.deleteFav(table, id);
+      if (fav) return this.dbService.deleteFav(table, id);
       else throw new NotFoundException();
     }
   }

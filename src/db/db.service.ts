@@ -1,13 +1,13 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { v4 as uuidv4 } from 'uuid';
+import { In } from 'typeorm';
 import { User } from 'src/users/users.dto';
 import { Track } from 'src/tracks/tracks.dto';
 import { Artist } from 'src/artists/artists.dto';
 import { Album } from 'src/albums/albums.dto';
+import { Fav } from 'src/favs/favs.dto';
 import { isArray } from 'class-validator';
 import { DataSource, Repository } from 'typeorm';
-import { DSProvider } from './ds.provider';
-import { Fav } from 'src/favs/favs.dto';
+// import { DSProvider } from './ds.provider';
 
 type Entity = User | Track | Artist | Album | Fav;
 type CreateEntity = Omit<Entity, 'id'>;
@@ -15,24 +15,25 @@ type CreateEntity = Omit<Entity, 'id'>;
 // type Table = 'users' | 'tracks' | 'artists' | 'albums';
 type Table = string;
 type FavsTable = string; //'tracks' | 'artists' | 'albums';
-
-const classes = {
-  users: User,
-  tracks: Track,
-  artists: Artist,
-  albums: Album,
-  favs: Fav,
+type Repos = {
+  users: Repository<User>;
+  artists: Repository<Artist>;
+  tracks: Repository<Track>;
+  albums: Repository<Album>;
+  favs: Repository<Fav>;
 };
 
 @Injectable()
 export class DBService {
-  repos: Record<string, Repository<Entity>> = {};
+  repos: Repos;
   constructor(@Inject('DATA_SOURCE') private dataSource: DataSource) {
-    const ur = new User({ login: 'u1', password: 'p1', version: 1, createdAt: 1, updatedAt: 1 });
-    dataSource.manager.save(ur);
-    Object.keys(classes).forEach((c) => {
-      this.repos[c] = this.dataSource.getRepository(classes[c]);
-    });
+    this.repos = {
+      users: this.dataSource.getRepository(User),
+      tracks: this.dataSource.getRepository(Track),
+      artists: this.dataSource.getRepository(Artist),
+      albums: this.dataSource.getRepository(Album),
+      favs: this.dataSource.getRepository(Fav),
+    };
   }
 
   async getAll(table: Table) {
@@ -40,16 +41,12 @@ export class DBService {
   }
 
   async getList(table: Table, field: string, find: string | number | string[] | number[]) {
-    return await this.repos[table].findBy({ [field]: find });
-    // if (isArray(find)) {
-    //   const castedFind = find as (string | number)[];
-    //   return Object.keys(database[table])
-    //     .filter((key) => castedFind.includes(database[table][key][field]))
-    //     .map((key) => new classes[table](database[table][key]));
-    // } else
-    //   return Object.keys(database[table])
-    //     .filter((key) => database[table][key][field] === find)
-    //     .map((key) => new classes[table](database[table][key]));
+    if (isArray(find)) {
+      const castedFind = find as (string | number)[];
+      return await this.repos[table].find({ where: { [field]: In(castedFind) } });
+    } else {
+      return await this.repos[table].find({ where: { [field]: find } });
+    }
   }
 
   async get(table: Table, id: string): Promise<Entity> {
@@ -72,9 +69,10 @@ export class DBService {
     if (!entity) {
       throw new NotFoundException();
     } else {
-      console.log(entity,data);
+      if (table=="users") console.log('update1',table,entity,data);
       this.repos[table].merge(entity, data);
-      this.repos[table].save(entity);
+      await this.repos[table].save(entity);
+      if (table=="users") console.log('update2',table,entity,data);
       return entity;
     }
   }
@@ -84,7 +82,7 @@ export class DBService {
     if (!entity) {
       throw new NotFoundException();
     } else {
-      this.repos[table].delete(entity);
+      await this.repos[table].delete(entity);
       return {};
     }
   }
@@ -92,35 +90,18 @@ export class DBService {
   //////// FAVS //////////
 
   async getFavs(table: FavsTable) {
-    return (await this.repos.favs.findBy({ table })).map((fav) => fav.id);
+    return (await this.repos.favs.find({ where: { table } })).map((fav) => fav.entityId);
   }
 
   async getFav(table: FavsTable, id: string) {
-    return await this.repos.favs.findOneBy({ table, id });
+    return await this.repos.favs.findOneBy({ table, entityId: id });
   }
 
   async addFav(table: FavsTable, id: string) {
-    return await this.repos.favs.insert({ table, id });
+    return await this.repos.favs.insert({ table, entityId: id });
   }
 
   async deleteFav(table: FavsTable, id: string) {
-    return await this.repos.favs.delete({ table, id });
+    return await this.repos.favs.delete({ table, entityId: id });
   }
-
-  /*
-  setFavs(table: FavsTable, favs: string[]) {
-    return (database.favs[table] = favs);
-  }
-
-  addFavs(table: FavsTable, fav: string) {
-    database.favs[table].push(fav);
-    return database.favs[table];
-  }
-
-  deleteFavs(table: FavsTable, fav: string) {
-    const i = database.favs[table].indexOf(fav);
-    if (i > -1) database.favs[table].splice(i, 1);
-    return database.favs[table];
-  }
-  */
 }

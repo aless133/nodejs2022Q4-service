@@ -17,23 +17,20 @@ export class UsersService extends CrudService<User, UserCreateDto> {
     const user = new User(userCreate);
     user.version = 1;
     user.createdAt = user.updatedAt = Date.now();
-    return this.dbService.create('users', user);
+    return await this.dbService.create('users', user);
   }
 
   async updatePassword(id: string, userUpdate: UserUpdateDto) {
     const user = await this.dbService.get('users', id) as User;
-    if (user.password == userUpdate.oldPassword)
-      return this.dbService.update('users', id, {
+    if (user.password == userUpdate.oldPassword) {
+      return await this.dbService.update('users', id, {
         password: userUpdate.newPassword,
         version: user.version + 1,
         updatedAt: Date.now(),
       });
-    else {
+    } else {
       throw new ForbiddenException();
     }
   }
 
-  // delete(id: string) {
-  //   return this.dbService.delete('users', id);
-  // }
 }

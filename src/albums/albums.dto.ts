@@ -1,7 +1,7 @@
 import { IsString, IsInt, IsNotEmpty, IsPositive, IsUUID, ValidateIf } from 'class-validator';
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
-@Entity()
+@Entity({ name: 'albums' })
 export class Album {
   @PrimaryGeneratedColumn('uuid')
   id: string; // uuid v4

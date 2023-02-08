@@ -26,7 +26,7 @@ export abstract class CrudController<T, CreateT, UpdateT> {
   }
 
   @Get(':id')
-  get(@Param('id', ParseUUIDPipe) id: string): T {
+  get(@Param('id', ParseUUIDPipe) id: string) {
     return this.dataService.get(id);
   }
 
@@ -43,13 +43,13 @@ export abstract class CrudController<T, CreateT, UpdateT> {
   // }
 
   @Put(':id')
-  update(@Param('id', ParseUUIDPipe) id: string, @Body() data: UpdateT): T {
+  update(@Param('id', ParseUUIDPipe) id: string, @Body() data: UpdateT) {
     return this.dataService.update(id, data);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  delete(@Param('id', ParseUUIDPipe) id: string): T {
+  delete(@Param('id', ParseUUIDPipe) id: string) {
     return this.dataService.delete(id);
   }
 }

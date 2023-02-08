@@ -1,61 +1,72 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class createGenerated1675774159831 implements MigrationInterface {
-    name = 'createGenerated1675774159831'
+export class createGenerated1675889053058 implements MigrationInterface {
+    name = 'createGenerated1675889053058'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
-            CREATE TABLE "user" (
+            CREATE TABLE "users" (
                 "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
                 "login" character varying NOT NULL,
                 "password" character varying NOT NULL,
                 "version" integer NOT NULL,
-                "createdAt" integer NOT NULL,
-                "updatedAt" integer NOT NULL,
-                CONSTRAINT "PK_cace4a159ff9f2512dd42373760" PRIMARY KEY ("id")
+                "createdAt" bigint NOT NULL,
+                "updatedAt" bigint NOT NULL,
+                CONSTRAINT "PK_a3ffb1c0c8416b9fc6f907b7433" PRIMARY KEY ("id")
             )
         `);
         await queryRunner.query(`
-            CREATE TABLE "track" (
+            CREATE TABLE "tracks" (
                 "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
                 "name" character varying NOT NULL,
                 "artistId" character varying,
                 "albumId" character varying,
                 "duration" integer NOT NULL,
-                CONSTRAINT "PK_0631b9bcf521f8fab3a15f2c37e" PRIMARY KEY ("id")
+                CONSTRAINT "PK_242a37ffc7870380f0e611986e8" PRIMARY KEY ("id")
             )
         `);
         await queryRunner.query(`
-            CREATE TABLE "artist" (
+            CREATE TABLE "artists" (
                 "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
                 "name" character varying NOT NULL,
                 "grammy" boolean NOT NULL,
-                CONSTRAINT "PK_55b76e71568b5db4d01d3e394ed" PRIMARY KEY ("id")
+                CONSTRAINT "PK_09b823d4607d2675dc4ffa82261" PRIMARY KEY ("id")
             )
         `);
         await queryRunner.query(`
-            CREATE TABLE "album" (
+            CREATE TABLE "albums" (
                 "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
                 "name" character varying NOT NULL,
                 "year" integer NOT NULL,
                 "artistId" character varying,
-                CONSTRAINT "PK_58e0b4b8a31bb897e6959fe3206" PRIMARY KEY ("id")
+                CONSTRAINT "PK_838ebae24d2e12082670ffc95d7" PRIMARY KEY ("id")
+            )
+        `);
+        await queryRunner.query(`
+            CREATE TABLE "favs" (
+                "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
+                "table" character varying NOT NULL,
+                "entityId" character varying NOT NULL,
+                CONSTRAINT "PK_2fde25c80bd089c0fa0e7986409" PRIMARY KEY ("id")
             )
         `);
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
-            DROP TABLE "album"
+            DROP TABLE "favs"
         `);
         await queryRunner.query(`
-            DROP TABLE "artist"
+            DROP TABLE "albums"
         `);
         await queryRunner.query(`
-            DROP TABLE "track"
+            DROP TABLE "artists"
         `);
         await queryRunner.query(`
-            DROP TABLE "user"
+            DROP TABLE "tracks"
+        `);
+        await queryRunner.query(`
+            DROP TABLE "users"
         `);
     }
 
