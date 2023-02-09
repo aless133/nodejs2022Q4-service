@@ -69,10 +69,8 @@ export class DBService {
     if (!entity) {
       throw new NotFoundException();
     } else {
-      if (table=="users") console.log('update1',table,entity,data);
       this.repos[table].merge(entity, data);
       await this.repos[table].save(entity);
-      if (table=="users") console.log('update2',table,entity,data);
       return entity;
     }
   }
@@ -82,7 +80,7 @@ export class DBService {
     if (!entity) {
       throw new NotFoundException();
     } else {
-      await this.repos[table].delete(entity);
+      await this.repos[table].delete({ id });
       return {};
     }
   }

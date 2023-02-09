@@ -19,11 +19,11 @@ export abstract class CrudService<T, CreateT> {
     return await this.dbService.create(this.getTable(), data);
   }
 
-  update(id: string, data: Partial<T>) {
-    return this.dbService.update(this.getTable(), id, data);
+  async update(id: string, data: Partial<T>) {
+    return await this.dbService.update(this.getTable(), id, data);
   }
 
-  delete(id: string) {
-    return this.dbService.delete(this.getTable(), id);
+  async delete(id: string) {
+    return await this.dbService.delete(this.getTable(), id);
   }
 }

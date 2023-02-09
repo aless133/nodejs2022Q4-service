@@ -40,6 +40,7 @@ export const DSProvider = {
       migrations: ['dist/migrations/*.js'],
       migrationsRun: true,
       // logging: true,
+      parseInt8: true,
     });
     return dataSource.initialize();
   }
