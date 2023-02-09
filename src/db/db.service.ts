@@ -75,11 +75,14 @@ export class DBService {
     }
   }
 
-  async delete(table: Table, id: string) {
+  async delete(table: Table, id: string, before?: (e: Entity) => Promise<void>) {
     const entity = await this.repos[table].findOneBy({ id });
     if (!entity) {
       throw new NotFoundException();
     } else {
+      if (before) {
+        await before(entity);
+      }
       await this.repos[table].delete({ id });
       return {};
     }

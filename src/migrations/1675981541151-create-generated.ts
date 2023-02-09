@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class createGenerated1675964800321 implements MigrationInterface {
-    name = 'createGenerated1675964800321'
+export class createGenerated1675981541151 implements MigrationInterface {
+    name = 'createGenerated1675981541151'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
@@ -16,13 +16,12 @@ export class createGenerated1675964800321 implements MigrationInterface {
             )
         `);
         await queryRunner.query(`
-            CREATE TABLE "tracks" (
+            CREATE TABLE "albums" (
                 "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
                 "name" character varying NOT NULL,
-                "artistId" character varying,
-                "albumId" character varying,
-                "duration" integer NOT NULL,
-                CONSTRAINT "PK_242a37ffc7870380f0e611986e8" PRIMARY KEY ("id")
+                "year" integer NOT NULL,
+                "artistId" uuid,
+                CONSTRAINT "PK_838ebae24d2e12082670ffc95d7" PRIMARY KEY ("id")
             )
         `);
         await queryRunner.query(`
@@ -34,12 +33,13 @@ export class createGenerated1675964800321 implements MigrationInterface {
             )
         `);
         await queryRunner.query(`
-            CREATE TABLE "albums" (
+            CREATE TABLE "tracks" (
                 "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
                 "name" character varying NOT NULL,
-                "year" integer NOT NULL,
-                "artistId" character varying,
-                CONSTRAINT "PK_838ebae24d2e12082670ffc95d7" PRIMARY KEY ("id")
+                "artistId" uuid,
+                "albumId" uuid,
+                "duration" integer NOT NULL,
+                CONSTRAINT "PK_242a37ffc7870380f0e611986e8" PRIMARY KEY ("id")
             )
         `);
         await queryRunner.query(`
@@ -50,20 +50,41 @@ export class createGenerated1675964800321 implements MigrationInterface {
                 CONSTRAINT "PK_2fde25c80bd089c0fa0e7986409" PRIMARY KEY ("id")
             )
         `);
+        await queryRunner.query(`
+            ALTER TABLE "albums"
+            ADD CONSTRAINT "FK_ed378d7c337efd4d5c8396a77a1" FOREIGN KEY ("artistId") REFERENCES "artists"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+        `);
+        await queryRunner.query(`
+            ALTER TABLE "tracks"
+            ADD CONSTRAINT "FK_62f595181306916265849fced48" FOREIGN KEY ("artistId") REFERENCES "artists"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+        `);
+        await queryRunner.query(`
+            ALTER TABLE "tracks"
+            ADD CONSTRAINT "FK_5c52e761792791f57de2fec342d" FOREIGN KEY ("albumId") REFERENCES "albums"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+        `);
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
+            ALTER TABLE "tracks" DROP CONSTRAINT "FK_5c52e761792791f57de2fec342d"
+        `);
+        await queryRunner.query(`
+            ALTER TABLE "tracks" DROP CONSTRAINT "FK_62f595181306916265849fced48"
+        `);
+        await queryRunner.query(`
+            ALTER TABLE "albums" DROP CONSTRAINT "FK_ed378d7c337efd4d5c8396a77a1"
+        `);
+        await queryRunner.query(`
             DROP TABLE "favs"
         `);
         await queryRunner.query(`
-            DROP TABLE "albums"
+            DROP TABLE "tracks"
         `);
         await queryRunner.query(`
             DROP TABLE "artists"
         `);
         await queryRunner.query(`
-            DROP TABLE "tracks"
+            DROP TABLE "albums"
         `);
         await queryRunner.query(`
             DROP TABLE "users"

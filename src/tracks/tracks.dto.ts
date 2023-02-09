@@ -1,5 +1,7 @@
 import { IsUUID, IsString, IsInt, IsNotEmpty, IsPositive, ValidateIf } from 'class-validator';
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Artist } from 'src/artists/artists.dto';
+import { Album } from 'src/albums/albums.dto';
 
 @Entity({ name: 'tracks' })
 export class Track {
@@ -14,6 +16,14 @@ export class Track {
 
   @Column({ nullable: true })
   albumId: string | null; // refers to Album
+
+  @ManyToOne((type) => Artist, (artist) => artist.tracks)
+  @JoinColumn({ name: 'artistId' })
+  artist: Promise<Artist>;
+
+  @ManyToOne((type) => Album, (album) => album.tracks)
+  @JoinColumn({ name: 'albumId' })
+  album: Promise<Album>;
 
   @Column()
   duration: number; // integer number

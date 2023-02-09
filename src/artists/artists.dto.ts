@@ -1,5 +1,7 @@
 import { IsString, IsBoolean, IsNotEmpty } from 'class-validator';
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Track } from 'src/tracks/tracks.dto';
+import { Album } from 'src/albums/albums.dto';
 
 @Entity({ name: 'artists' })
 export class Artist {
@@ -11,6 +13,12 @@ export class Artist {
 
   @Column()
   grammy: boolean;
+
+  @OneToMany(() => Track, (track) => track.artist)
+  tracks: Promise<Track[]>;
+
+  @OneToMany(() => Album, (album) => album.artist)
+  albums: Promise<Album[]>;
 
   constructor(partial: Partial<Artist>) {
     Object.assign(this, partial);
