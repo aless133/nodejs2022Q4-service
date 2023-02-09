@@ -15,9 +15,9 @@ export class ArtistsService extends CrudService<Artist, ArtistDto> {
 
   async delete(id: string) {
     const tracks = await this.dbService.getList('tracks', 'artistId', id);
-    tracks.forEach(async (track) => await this.dbService.update('tracks', track.id, { artistId: null }));
+    await Promise.all(tracks.map(async (track) => await this.dbService.update('tracks', track.id, { artistId: null })));
     const albums = await this.dbService.getList('albums', 'artistId', id);
-    albums.forEach(async (album) => await this.dbService.update('albums', album.id, { artistId: null }));
+    await Promise.all(albums.map(async (album) => await this.dbService.update('albums', album.id, { artistId: null })));
     return await this.dbService.delete('artists', id);
   }
 }
