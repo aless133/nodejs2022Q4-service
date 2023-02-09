@@ -6,13 +6,15 @@ import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 @Entity({ name: 'favs' })
 export class Fav {
   @PrimaryGeneratedColumn('uuid')
-  id: string; // uuid v4  
+  id: string; // uuid v4
+
   @Column()
   table: string;
+
   @Column()
   entityId: string;
 
   constructor(partial: Partial<Fav>) {
     Object.assign(this, partial);
-  }  
+  }
 }

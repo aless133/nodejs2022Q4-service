@@ -21,7 +21,7 @@ export class UsersService extends CrudService<User, UserCreateDto> {
   }
 
   async updatePassword(id: string, userUpdate: UserUpdateDto) {
-    const user = await this.dbService.get('users', id) as User;
+    const user = (await this.dbService.get('users', id)) as User;
     if (user.password == userUpdate.oldPassword) {
       return await this.dbService.update('users', id, {
         password: userUpdate.newPassword,
@@ -32,5 +32,4 @@ export class UsersService extends CrudService<User, UserCreateDto> {
       throw new ForbiddenException();
     }
   }
-
 }

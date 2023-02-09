@@ -17,11 +17,11 @@ export class Track {
   @Column({ nullable: true })
   albumId: string | null; // refers to Album
 
-  @ManyToOne((type) => Artist, (artist) => artist.tracks)
+  @ManyToOne(() => Artist, (artist) => artist.tracks)
   @JoinColumn({ name: 'artistId' })
   artist: Promise<Artist>;
 
-  @ManyToOne((type) => Album, (album) => album.tracks)
+  @ManyToOne(() => Album, (album) => album.tracks)
   @JoinColumn({ name: 'albumId' })
   album: Promise<Album>;
 

@@ -1,5 +1,5 @@
 import { IsString, IsInt, IsNotEmpty, IsPositive, IsUUID, ValidateIf } from 'class-validator';
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne } from 'typeorm';
 import { Track } from 'src/tracks/tracks.dto';
 import { Artist } from 'src/artists/artists.dto';
 
@@ -17,10 +17,10 @@ export class Album {
   @Column({ nullable: true })
   artistId: string | null; // refers to Artist
 
-  @ManyToOne((type) => Artist, (artist) => artist.albums)
+  @ManyToOne(() => Artist, (artist) => artist.albums)
   artist: Promise<Artist>;
 
-  @OneToMany((type) => Track, (track) => track.album)
+  @OneToMany(() => Track, (track) => track.album)
   tracks: Promise<Track[]>;
 
   constructor(partial: Partial<Album>) {

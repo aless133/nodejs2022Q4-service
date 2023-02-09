@@ -1,5 +1,4 @@
 import { Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
-import { ConsoleLogger } from '@nestjs/common/services';
 import { DBService } from 'src/db/db.service';
 import { Fav } from 'src/favs/favs.dto';
 
@@ -26,8 +25,7 @@ export class FavsService {
     }
     if (obj) {
       const fav = await this.dbService.getFav(table, id);
-      if (!fav) 
-        return this.dbService.addFav(table, id);
+      if (!fav) return this.dbService.addFav(table, id);
     }
   }
 

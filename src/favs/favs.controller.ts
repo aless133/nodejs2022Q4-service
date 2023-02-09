@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Param, ParseUUIDPipe, Delete, HttpStatus, HttpCode, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Post, Param, ParseUUIDPipe, Delete, HttpStatus, HttpCode } from '@nestjs/common';
 import { FavsService } from './favs.service';
 
 @Controller('favs')
@@ -30,7 +30,7 @@ export class FavsController {
 
   @Delete('album/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  deleteAlbum(@Param('id', ParseUUIDPipe) id: string) {    
+  deleteAlbum(@Param('id', ParseUUIDPipe) id: string) {
     return this.dataService.delete('albums', id);
   }
 

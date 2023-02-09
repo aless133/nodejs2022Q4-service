@@ -43,5 +43,5 @@ export const DSProvider = {
       parseInt8: true,
     });
     return dataSource.initialize();
-  }
+  },
 };
