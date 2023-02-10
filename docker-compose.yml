@@ -1,6 +1,7 @@
 services:
   api:
     build: .
+    image: alessandro133/rest-service-api
     ports:
       - "$PORT:$PORT"
     restart: on-failure
@@ -14,6 +15,7 @@ services:
 
   database:
     build: ./database
+    image: alessandro133/rest-service-database
     ports:
       - "$POSTGRES_PORT:$POSTGRES_PORT"   
     restart: on-failure 
