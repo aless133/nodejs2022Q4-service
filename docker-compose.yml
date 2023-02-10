@@ -2,6 +2,8 @@ services:
   api:
     build: .
     image: alessandro133/rest-service-api
+    networks:
+      - rest-network      
     ports:
       - "$PORT:$PORT"
     restart: on-failure
@@ -16,6 +18,8 @@ services:
   database:
     build: ./database
     image: alessandro133/rest-service-database
+    networks:
+      - rest-network      
     ports:
       - "$POSTGRES_PORT:$POSTGRES_PORT"   
     restart: on-failure 
@@ -25,3 +29,7 @@ services:
       - POSTGRES_DB=$POSTGRES_DB
       - POSTGRES_USER=$POSTGRES_USER
       - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+networks:
+  rest-network:
+    driver: bridge
+
