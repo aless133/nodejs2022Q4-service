@@ -15,7 +15,7 @@ if (typeof process.env.POSTGRES_PASSWORD == 'undefined') {
 //for migration generation
 export const dataSource = new DataSource({
   type: 'postgres',
-  host: 'localhost',
+  host: process.env.POSTGRES_HOST,
   port: parseInt(process.env.POSTGRES_PORT, 10),
   username: process.env.POSTGRES_USER,
   password: process.env.POSTGRES_PASSWORD,
@@ -31,7 +31,7 @@ export const DSProvider = {
   useFactory: async () => {
     const dataSource = new DataSource({
       type: 'postgres',
-      host: 'localhost',
+      host: process.env.POSTGRES_HOST,
       port: parseInt(process.env.POSTGRES_PORT, 10),
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
