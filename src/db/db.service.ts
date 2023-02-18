@@ -83,15 +83,21 @@ export class DBService {
       if (before) {
         await before(entity);
       }
-      await this.repos[table].delete({ id });
+      if (['artists', 'tracks', 'albums'].includes(table)) {
+        const fav = await entity.fav;
+        if (fav)
+          await this.repos.favs.remove(fav);
+      }
+      await this.repos[table].remove(entity);
       return {};
     }
   }
 
   //////// FAVS //////////
 
-  async getFavs(table: FavsTable) {
-    return (await this.repos.favs.find({ where: { table } })).map((fav) => fav.entityId);
+  async getFavs(table?: FavsTable) {
+    if (table) return await this.repos.favs.find({ where: { table }, relations: ['artist', 'track', 'album'] });
+    else return await this.repos.favs.find({ relations: ['artist', 'track', 'album'] });
   }
 
   async getFav(table: FavsTable, id: string) {

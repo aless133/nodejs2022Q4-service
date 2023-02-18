@@ -7,11 +7,18 @@ export class FavsService {
   constructor(readonly dbService: DBService) {}
 
   async getAll() {
+    const favs = await this.dbService.getFavs();
+    console.log(favs);
     const all = {
-      artists: await this.dbService.getList('artists', 'id', await this.dbService.getFavs('artists')),
-      albums: await this.dbService.getList('albums', 'id', await this.dbService.getFavs('albums')),
-      tracks: await this.dbService.getList('tracks', 'id', await this.dbService.getFavs('tracks')),
+      artists: [],
+      albums: [],
+      tracks: [],
     };
+    for (const fav of favs) {
+      if (fav.table == 'artists') all.artists.push(await fav.artist);
+      if (fav.table == 'albums') all.albums.push(await fav.album);
+      if (fav.table == 'tracks') all.tracks.push(await fav.track);
+    }
     return all;
   }
 
