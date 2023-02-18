@@ -21,8 +21,8 @@ export class Artist {
   @OneToMany(() => Album, (album) => album.artist)
   albums: Promise<Album[]>;
 
-  @OneToOne((type) => Fav, (fav) => fav.artist)
-  fav: Promise<Fav>;  
+  @OneToOne(() => Fav, (fav) => fav.artist)
+  fav: Promise<Fav>;
 
   constructor(partial: Partial<Artist>) {
     Object.assign(this, partial);

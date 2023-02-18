@@ -26,8 +26,8 @@ export class Track {
   @JoinColumn({ name: 'albumId' })
   album: Promise<Album>;
 
-  @OneToOne((type) => Fav, (fav) => fav.artist)
-  fav: Promise<Fav>;  
+  @OneToOne(() => Fav, (fav) => fav.artist)
+  fav: Promise<Fav>;
 
   @Column()
   duration: number; // integer number

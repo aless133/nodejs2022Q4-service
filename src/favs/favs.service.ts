@@ -1,9 +1,6 @@
 import { Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 import { DBService } from 'src/db/db.service';
-import { Fav, FavsTable, FavsEntity } from 'src/favs/favs.dto';
-import { Artist } from 'src/artists/artists.dto';
-import { Album } from 'src/albums/albums.dto';
-import { Track } from 'src/tracks/tracks.dto';
+import { FavsTable, FavsEntity } from 'src/favs/favs.dto';
 
 @Injectable()
 export class FavsService {
@@ -41,7 +38,7 @@ export class FavsService {
   async delete(table: FavsTable, id: string) {
     const obj = await this.dbService.get(table, id);
     if (obj) {
-      const fav = await ((obj as FavsEntity).fav);
+      const fav = await (obj as FavsEntity).fav;
       if (fav) return this.dbService.deleteFav(fav);
       else throw new NotFoundException();
     }

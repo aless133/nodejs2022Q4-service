@@ -85,8 +85,7 @@ export class DBService {
       }
       if (['artists', 'tracks', 'albums'].includes(table)) {
         const fav = await (entity as FavsEntity).fav;
-        if (fav)
-          await this.repos.favs.remove(fav);
+        if (fav) await this.repos.favs.remove(fav);
       }
       await this.repos[table].remove(entity);
       return {};
