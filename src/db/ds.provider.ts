@@ -1,6 +1,6 @@
 import * as dotenv from 'dotenv';
 
-import { DataSource } from 'typeorm';
+import { DataSource, DataSourceOptions } from 'typeorm';
 import { User } from 'src/users/users.dto';
 import { Track } from 'src/tracks/tracks.dto';
 import { Artist } from 'src/artists/artists.dto';
@@ -10,10 +10,8 @@ import { Fav } from 'src/favs/favs.dto';
 if (typeof process.env.POSTGRES_PASSWORD == 'undefined') {
   dotenv.config();
 }
-// console.log(process.env.POSTGRES_PASSWORD);
 
-//for migration generation
-export const dataSource = new DataSource({
+const dataSourceOptions: DataSourceOptions = {
   type: 'postgres',
   host: process.env.POSTGRES_HOST,
   port: parseInt(process.env.POSTGRES_PORT, 10),
@@ -21,27 +19,23 @@ export const dataSource = new DataSource({
   password: process.env.POSTGRES_PASSWORD,
   database: process.env.POSTGRES_DB,
   entities: [User, Track, Artist, Album, Fav],
-  // migrations: ['src/migrations/*.ts'],
-  // migrationsRun: true,
+};
+
+//for migration generation
+export const dataSource = new DataSource(dataSourceOptions);
+
+const providerDataSourceOptions = {
+  ...dataSourceOptions,
+  migrations: ['dist/migrations/*.js'],
+  migrationsRun: true,
   // logging: true,
-});
+  parseInt8: true,
+};
 
 export const DSProvider = {
   provide: 'DATA_SOURCE',
   useFactory: async () => {
-    const dataSource = new DataSource({
-      type: 'postgres',
-      host: process.env.POSTGRES_HOST,
-      port: parseInt(process.env.POSTGRES_PORT, 10),
-      username: process.env.POSTGRES_USER,
-      password: process.env.POSTGRES_PASSWORD,
-      database: process.env.POSTGRES_DB,
-      entities: [User, Track, Artist, Album, Fav],
-      migrations: ['dist/migrations/*.js'],
-      migrationsRun: true,
-      // logging: true,
-      parseInt8: true,
-    });
+    const dataSource = new DataSource(providerDataSourceOptions);
     return dataSource.initialize();
   },
 };

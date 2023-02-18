@@ -11,7 +11,6 @@ export class FavsService {
 
   async getAll() {
     const favs = await this.dbService.getFavs();
-    console.log(favs);
     const all = {
       artists: [],
       albums: [],
