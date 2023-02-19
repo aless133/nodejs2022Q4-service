@@ -26,7 +26,7 @@ For more information about OpenAPI/Swagger please visit https://swagger.io/.
 
 Next time you can use `docker-compose up` to run already build images.
 
-PostgreSQL data catalog will be binded to `./database/data`, on the first run database will be created there. PostgreSQL logs are in './database/data/log`. If you need to, you can stop containers, remove this folder and restart containers (`docker-compose up`). Database will be re-created, all migrations will be applied.
+PostgreSQL data catalog will be binded to `./database/data`, on the first run database will be created there. PostgreSQL logs are in `./database/data/log`. If you need to, you can stop containers, remove this folder and restart containers (`docker-compose up`). Database will be re-created, all migrations will be applied.
 
 ---
 
@@ -75,6 +75,6 @@ Do to this just run command like
 ```
 docker exec <app> npm run test
 ```
-Where app is ID or Name of container. You can see them after running `docker container ls`. Name of api service of this app possibly will be `nodejs2022q4-service-api-1`, so the command will look like `docker exec  nodejs2022q4-service-api-1 npm test` or by example id `docker exec aa9b827ebd96 npm test`.
+Where app is ID or Name of container. You can see them after running `docker container ls`. Name of api service of this app possibly will be `nodejs2022q4-service-api-1`, so the command will look like `docker exec nodejs2022q4-service-api-1 npm test` or by example id `docker exec aa9b827ebd96 npm test`.
 
 Most of other npm commands can be run this way too.
