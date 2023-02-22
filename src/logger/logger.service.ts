@@ -1,21 +1,26 @@
-import { Injectable, LoggerService, Inject } from '@nestjs/common';
+import { Injectable, LoggerService, Inject, OnModuleInit } from '@nestjs/common';
 import { createWriteStream, WriteStream } from 'node:fs';
 import { Request } from 'express';
 
 const levels = ['error', 'warn', 'log', 'verbose', 'debug'];
 
 @Injectable()
-export class RSLoggerService implements LoggerService {
+export class RSLoggerService implements LoggerService, OnModuleInit {
   level: number;
   logFile: WriteStream;
   logErrorFile: WriteStream;
   requestId: string;
 
   constructor(@Inject('REQUEST') private readonly request: Request) {
+    console.log('RSLoggerService construct');
     this.requestId = 'req-'+Math.random().toString(36).substring(2, 6);
     this.level = levels.indexOf(process.env.LOGGER_LEVEL || 'log');
     this.logFile = createWriteStream('./logs/app.log', { flags: 'a' });
     this.logErrorFile = createWriteStream('./logs/error.log', { flags: 'a' });
+  }
+
+  onModuleInit(): any {
+    console.log('RSLoggerService onModuleInit');
   }
 
   error(message: any, ...optionalParams: any[]) {
@@ -33,6 +38,7 @@ export class RSLoggerService implements LoggerService {
   debug(message: any, ...optionalParams: any[]) {
     return this.add(4, 'DBG '+message.toString());
   }
+  
   add(level: number, message: string) {
     if (level > this.level) return false;
     const msg = new Date().toISOString() + ' ' + this.requestId + ' ' + message + '\n';

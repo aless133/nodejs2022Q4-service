@@ -8,6 +8,8 @@ export class RequestLoggerMiddleware implements NestMiddleware {
 
   async use(req: Request, res: Response, next: NextFunction) {
 
+    console.log('rlm',this.logger,typeof this.logger);
+
     const oldWrite = res.write;
     const oldEnd = res.end;
 
