@@ -1,5 +1,5 @@
 import { Injectable, LoggerService, Inject, Scope } from '@nestjs/common';
-import { statSync, renameSync, appendFile } from 'node:fs';
+import { statSync, renameSync, appendFileSync } from 'node:fs';
 import { Request } from 'express';
 
 const levels = ['error', 'warn', 'log', 'verbose', 'debug'];
@@ -54,6 +54,6 @@ export class RSLoggerService implements LoggerService {
     } catch (err) {
       //no file - no problem
     }
-    appendFile(fileName, msg, () => {});
+    appendFileSync(fileName, msg);
   }
 }
