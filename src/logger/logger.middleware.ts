@@ -8,8 +8,10 @@ export class RequestLoggerMiddleware implements NestMiddleware {
 
   async use(req: Request, res: Response, next: NextFunction) {
 
+    req['requestId'] = 'req-'+Math.random().toString(36).substring(2, 6);
     const oldWrite = res.write;
     const oldEnd = res.end;
+    let time = Date.now();
 
     const chunks: any[] = [];
 
@@ -28,8 +30,9 @@ export class RequestLoggerMiddleware implements NestMiddleware {
     };
 
     next();
-    
-    const str = `${req.url} ${JSON.stringify(req.query)} ${JSON.stringify(req.body)} ${res.statusCode}`;
+
+    time = Date.now() - time;   
+    const str = `${req.url} ${JSON.stringify(req.query)} ${JSON.stringify(req.body)} - ${res.statusCode} - ${time}ms`;
     if (res.statusCode>=500 && res.statusCode<=599)
       this.logger.error(str);
     else if (res.statusCode>=400 && res.statusCode<=499)
