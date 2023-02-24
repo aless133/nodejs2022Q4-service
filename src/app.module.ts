@@ -6,11 +6,12 @@ import { TracksModule } from './tracks/tracks.module';
 import { ArtistsModule } from './artists/artists.module';
 import { AlbumsModule } from './albums/albums.module';
 import { FavsModule } from './favs/favs.module';
+import { AuthModule } from './auth/auth.module';
 import { LoggerModule } from './logger/logger.module';
 import { RequestLoggerMiddleware } from './logger/logger.middleware';
 
 @Module({
-  imports: [UsersModule, TracksModule, ArtistsModule, AlbumsModule, FavsModule, LoggerModule],
+  imports: [UsersModule, TracksModule, ArtistsModule, AlbumsModule, FavsModule, LoggerModule, AuthModule],
   controllers: [AppController],
   providers: [AppService],
 })

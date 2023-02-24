@@ -10,9 +10,9 @@ export class RSLoggerService implements LoggerService {
   logFile: WriteStream;
   logErrorFile: WriteStream;
 
-  // constructor(@Inject('REQUEST') private readonly req: Request) {
-  constructor() {
-    console.log('RSLoggerService.constructor');
+  constructor(@Inject('REQUEST') private readonly req: Request) {
+  // constructor() {
+    // console.log('RSLoggerService.constructor');
     this.level = levels.indexOf(process.env.LOGGER_LEVEL || 'log');
     this.logFile = createWriteStream('./logs/app.log', { flags: 'a' });
     this.logErrorFile = createWriteStream('./logs/error.log', { flags: 'a' });
@@ -35,8 +35,8 @@ export class RSLoggerService implements LoggerService {
   }
   add(level: number, message: string) {
     if (level > this.level) return false;
-    //const msg = new Date().toISOString() + ' ' + this.req['requestId'] + ' ' + message + '\n';
-    const msg = new Date().toISOString() + ' ' + message + '\n';
+    const msg = new Date().toISOString() + ' ' + this.req['requestId'] + ' ' + message + '\n';
+    // const msg = new Date().toISOString() + ' ' + message + '\n';
     process.stdout.write(msg);
     this.writeToFile(this.logFile, msg);
     if (level == 0) {

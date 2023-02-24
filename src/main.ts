@@ -4,6 +4,7 @@ import 'reflect-metadata';
 
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { AuthGuard } from './auth/auth.guard';
 import { ValidationPipe } from '@nestjs/common';
 
 import { parse as yamlParse } from 'yaml';
@@ -12,6 +13,8 @@ import { SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  app.useGlobalGuards(new AuthGuard());
 
   const file = await readFile('./doc/api.yaml', 'utf8');
   const document = yamlParse(file);

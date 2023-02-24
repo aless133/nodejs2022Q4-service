@@ -1,7 +1,9 @@
-import { Controller, Get, Post, Param, ParseUUIDPipe, Delete, HttpStatus, HttpCode } from '@nestjs/common';
+import { Controller, Get, Post, Param, ParseUUIDPipe, Delete, HttpStatus, HttpCode, UseGuards } from '@nestjs/common';
 import { FavsService } from './favs.service';
+// import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('favs')
+// @UseGuards(AuthGuard)
 export class FavsController {
   constructor(readonly dataService: FavsService) {}
 

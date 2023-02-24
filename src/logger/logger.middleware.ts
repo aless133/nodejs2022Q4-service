@@ -24,21 +24,24 @@ export class RequestLoggerMiddleware implements NestMiddleware {
       if (restArgs[0]) {
         chunks.push(Buffer.from(restArgs[0]));
       }
-      const body = Buffer.concat(chunks).toString('utf8');
-      this.logger.verbose('Response body: '+body);
       return oldEnd.apply(res, restArgs);
     };
 
-    next();
+    res.on('finish',()=>{
+      time = Date.now() - time;   
+      const str = `${req.method} ${req.url} ${JSON.stringify(req.query)} ${JSON.stringify(req.body)} - ${res.statusCode} - ${time}ms`;
+      if (res.statusCode>=500 && res.statusCode<=599)
+        this.logger.error(str);
+      else if (res.statusCode>=400 && res.statusCode<=499)
+        this.logger.warn(str);
+      else
+        this.logger.log(str);
+      this.logger.log(JSON.stringify(req.headers));
+      const body = Buffer.concat(chunks).toString('utf8');
+      this.logger.verbose('Response body: '+body);
+      this.logger.debug(`${req.ip} ${req.headers['user-agent']??'<user-agent-not-set>'}`);
+    })
 
-    time = Date.now() - time;   
-    const str = `${req.url} ${JSON.stringify(req.query)} ${JSON.stringify(req.body)} - ${res.statusCode} - ${time}ms`;
-    if (res.statusCode>=500 && res.statusCode<=599)
-      this.logger.error(str);
-    else if (res.statusCode>=400 && res.statusCode<=499)
-      this.logger.warn(str);
-    else
-      this.logger.log(str);
-    this.logger.debug(`${req.ip} ${req.headers['user-agent']}`);
+    next();
   }
 }
