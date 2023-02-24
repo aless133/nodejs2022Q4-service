@@ -8,11 +8,10 @@ export class RequestLoggerMiddleware implements NestMiddleware {
 
   async use(req: Request, res: Response, next: NextFunction) {
 
-    req['requestId'] = 'req-'+Math.random().toString(36).substring(2, 6);
+    let time = Date.now();
+    const requestId = 'req-'+Math.random().toString(36).substring(2, 6);
     const oldWrite = res.write;
     const oldEnd = res.end;
-    let time = Date.now();
-
     const chunks: any[] = [];
 
     res.write = (...restArgs: any[]) => {
@@ -29,17 +28,17 @@ export class RequestLoggerMiddleware implements NestMiddleware {
 
     res.on('finish',()=>{
       time = Date.now() - time;   
-      const str = `${req.method} ${req.url} ${JSON.stringify(req.query)} ${JSON.stringify(req.body)} - ${res.statusCode} - ${time}ms`;
+      const str = `${requestId} ${req.method} ${req.url} ${JSON.stringify(req.query)} ${JSON.stringify(req.body)} - ${res.statusCode} - ${time}ms`;
       if (res.statusCode>=500 && res.statusCode<=599)
         this.logger.error(str);
       else if (res.statusCode>=400 && res.statusCode<=499)
         this.logger.warn(str);
       else
         this.logger.log(str);
-      this.logger.log(JSON.stringify(req.headers));
+      // this.logger.log(JSON.stringify(req.headers));
+      this.logger.verbose(`${requestId} ${req.ip} ${req.headers['user-agent']??'<user-agent-not-set>'} ${req.headers['authorization']??'<authorization-not-set>'}`);
       const body = Buffer.concat(chunks).toString('utf8');
-      this.logger.verbose('Response body: '+body);
-      this.logger.debug(`${req.ip} ${req.headers['user-agent']??'<user-agent-not-set>'}`);
+      this.logger.debug(`${requestId} Response body: ${body}`);
     })
 
     next();

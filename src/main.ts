@@ -5,6 +5,7 @@ import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { AuthGuard } from './auth/auth.guard';
+import { RSLoggerService } from './logger/logger.service';
 import { ValidationPipe } from '@nestjs/common';
 
 import { parse as yamlParse } from 'yaml';
@@ -14,6 +15,16 @@ import { SwaggerModule } from '@nestjs/swagger';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  const loggerService = app.get(RSLoggerService);
+  process.on('uncaughtException', (err, origin) => {
+    loggerService.error(`Caught exception: ${err}. Exception origin: ${origin}. Exiting process.`)
+    process.exit(1);
+  });
+  process.on('unhandledRejection', (reason, promise) => {
+    loggerService.warn(`Unhandled Rejection: ${reason}`);
+  });  
+  // throw new Error('top level throw');
+  
   app.useGlobalGuards(new AuthGuard());
 
   const file = await readFile('./doc/api.yaml', 'utf8');

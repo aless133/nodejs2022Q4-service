@@ -1,5 +1,5 @@
-import { Injectable, LoggerService, Inject } from '@nestjs/common';
-import { createWriteStream, WriteStream } from 'node:fs';
+import { Injectable, LoggerService, Inject, Scope } from '@nestjs/common';
+import { statSync, renameSync, appendFile } from 'node:fs';
 import { Request } from 'express';
 
 const levels = ['error', 'warn', 'log', 'verbose', 'debug'];
@@ -7,50 +7,53 @@ const levels = ['error', 'warn', 'log', 'verbose', 'debug'];
 @Injectable()
 export class RSLoggerService implements LoggerService {
   level: number;
-  logFile: WriteStream;
-  logErrorFile: WriteStream;
 
-  constructor(@Inject('REQUEST') private readonly req: Request) {
-  // constructor() {
-    // console.log('RSLoggerService.constructor');
+  // constructor(@Inject('REQUEST') readonly req: Request) {
+  constructor() {
     this.level = levels.indexOf(process.env.LOGGER_LEVEL || 'log');
-    this.logFile = createWriteStream('./logs/app.log', { flags: 'a' });
-    this.logErrorFile = createWriteStream('./logs/error.log', { flags: 'a' });
+  }
+
+  logFileName(error: boolean, suffix?: number | string) {
+    return './logs/' + (error ? 'error' : 'app') + (suffix ? '-' + suffix : '') + '.log';
   }
 
   error(message: any, ...optionalParams: any[]) {
-    return this.add(0, 'ERR '+message.toString());
+    return this.add(0, 'ERR ' + message.toString());
   }
   warn(message: any, ...optionalParams: any[]) {
-    return this.add(1, 'WRN '+message.toString());
+    return this.add(1, 'WRN ' + message.toString());
   }
   log(message: any, ...optionalParams: any[]) {
-    return this.add(2, 'LOG '+message.toString());
+    return this.add(2, 'LOG ' + message.toString());
   }
   verbose(message: any, ...optionalParams: any[]) {
-    return this.add(3, 'VRB '+message.toString());
+    return this.add(3, 'VRB ' + message.toString());
   }
   debug(message: any, ...optionalParams: any[]) {
-    return this.add(4, 'DBG '+message.toString());
+    return this.add(4, 'DBG ' + message.toString());
   }
   add(level: number, message: string) {
     if (level > this.level) return false;
-    const msg = new Date().toISOString() + ' ' + this.req['requestId'] + ' ' + message + '\n';
-    // const msg = new Date().toISOString() + ' ' + message + '\n';
+    // const msg = new Date().toISOString() + ' ' + this.req['requestId'] + ' ' + message + '\n';
+    const msg = new Date().toISOString() + ' ' + message + '\n';
     process.stdout.write(msg);
-    this.writeToFile(this.logFile, msg);
+    this.writeToFile(false, msg);
     if (level == 0) {
-      this.writeToFile(this.logErrorFile, msg);
+      this.writeToFile(true, msg);
     }
     return true;
   }
 
-  writeToFile(stream: WriteStream, msg: string) {
-    stream.write(msg);
-    // const initialPos = fileWriteStream.tell();
-    // // Write some data to the stream
-    // fileWriteStream.write('Hello World!');
-    // const size = fileWriteStream.tell() - initialPos;
-    // console.log(`File size: ${size} bytes`);
+  writeToFile(error: boolean, msg: string) {
+    const fileName = this.logFileName(error);
+    try {
+      const stats = statSync(fileName);
+      if (stats.size / 1024 > parseInt(process.env.LOGGER_FILE_SIZE || '0', 10)) {
+        renameSync(fileName, this.logFileName(error, Date.now()));
+      }
+    } catch (err) {
+      //no file - no problem
+    }
+    appendFile(fileName, msg, () => {});
   }
 }
