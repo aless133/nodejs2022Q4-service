@@ -16,7 +16,6 @@ export class AuthService {
   async login(data: AuthDto) {
     const users = await this.dbService.getBy('users', 'login', data.login);
     if (!users || !users.length) throw new ForbiddenException();
-    const user = users[users.length-1]; //should be users[0]
     if (await bcrypt.compare(data.password, users[0].password)) {
       return this.createTokens(users[0])
     } else throw new ForbiddenException();

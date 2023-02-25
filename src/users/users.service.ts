@@ -19,8 +19,8 @@ export class UsersService extends CrudService<User, UserCreateDto> {
   }
 
   async create(userCreate: UserCreateDto) {
-    // const oldUser = await this.dbService.getBy('users', 'login', userCreate.login);
-    // if (oldUser && oldUser.length) throw new BadRequestException();
+    const oldUser = await this.dbService.getBy('users', 'login', userCreate.login);
+    if (oldUser && oldUser.length) throw new BadRequestException();
     const user = new User(userCreate);
     user.version = 1;
     user.createdAt = user.updatedAt = Date.now();
