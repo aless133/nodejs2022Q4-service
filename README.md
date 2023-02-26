@@ -38,7 +38,7 @@ PostgreSQL data catalog will be binded to `./database/data`, on the first run da
 ## Logging
 * Application logs will be saved in `./logs/`, that folder is also binded to docker container.
 * Env variable `LOGGER_LEVEL` sets logging level. Valid levels are 'error', 'warn', 'log', 'verbose', 'debug'. ('debug' mean maximum information)
-* Env variable `LOGGER_FILE_SIZE` set maximum log file size. After reaching that size log file will be renamed to `<logFileName>-<currentTime>.log`, and new `<logFileName>.log` will be user.
+* Env variable `LOGGER_FILE_SIZE` set maximum log file size. After reaching that size log file will be renamed to `<logFileName>-<currentTime>.log`, and new `<logFileName>.log` will be used.
 * All logs are stored in `app.log`, errors are additionaly stored in `error.log`. All messages also are send to `process.stdout`
 * Default NestJs logger isn't changed and works as always.
 
