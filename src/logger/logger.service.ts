@@ -13,8 +13,18 @@ export class RSLoggerService implements LoggerService {
     this.level = levels.indexOf(process.env.LOGGER_LEVEL || 'log');
   }
 
+  generateRequestId() {
+    return 'req-' + Math.random().toString(36).substring(2, 6);
+  }
+
   logFileName(error: boolean, suffix?: number | string) {
     return './logs/' + (error ? 'error' : 'app') + (suffix ? '-' + suffix : '') + '.log';
+  }
+
+  logError(err: Error, message: any) {
+    const ret=this.error(message);
+    this.debug('Call stack: '+ err.stack);
+    return ret;
   }
 
   error(message: any, ...optionalParams: any[]) {

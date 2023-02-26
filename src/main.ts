@@ -17,13 +17,13 @@ async function bootstrap() {
 
   const loggerService = app.get(RSLoggerService);
   process.on('uncaughtException', (err, origin) => {
-    loggerService.error(`Caught exception: ${err}. Exception origin: ${origin}. Exiting process.`);
+    loggerService.logError(err, `Caught exception: ${err}. Exception origin: ${origin}. Exit process.`);
     process.exit(1);
   });
   process.on('unhandledRejection', (reason, promise) => {
-    loggerService.warn(`Unhandled Rejection: ${reason}`);
+    loggerService.warn(`Unhandled Rejection: ${reason}. Don't exit`);
+    // process.exit(1);
   });
-  // throw new Error('top level throw');
 
   app.useGlobalGuards(new AuthGuard());
 
@@ -35,3 +35,8 @@ async function bootstrap() {
   await app.listen(parseInt((process.env.PORT || '4000') as string));
 }
 bootstrap();
+
+// setTimeout(()=>{
+//   // throw new Error('Top level error');
+//   Promise.reject('Top level reject');
+// },2000);

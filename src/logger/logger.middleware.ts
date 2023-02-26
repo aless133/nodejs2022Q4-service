@@ -8,7 +8,7 @@ export class RequestLoggerMiddleware implements NestMiddleware {
 
   async use(req: Request, res: Response, next: NextFunction) {
     let time = Date.now();
-    const requestId = 'req-' + Math.random().toString(36).substring(2, 6);
+    const requestId = this.logger.generateRequestId();
     const oldWrite = res.write;
     const oldEnd = res.end;
     const chunks: any[] = [];
