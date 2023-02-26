@@ -9,6 +9,6 @@ import { UsersModule } from 'src/users/users.module';
   imports: [DBModule, UsersModule],
   controllers: [AuthController],
   providers: [AuthService, AuthGuard],
-  exports: [AuthGuard]
+  exports: [AuthGuard],
 })
 export class AuthModule {}

@@ -18,5 +18,4 @@ export class AppController {
   testReject() {
     Promise.reject('Test Reject');
   }
-
 }

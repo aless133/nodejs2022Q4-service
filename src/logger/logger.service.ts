@@ -1,6 +1,6 @@
-import { Injectable, LoggerService, Inject, Scope } from '@nestjs/common';
+import { Injectable, LoggerService, Inject } from '@nestjs/common';
 import { statSync, renameSync, appendFileSync } from 'node:fs';
-import { Request } from 'express';
+//import { Request } from 'express';
 
 const levels = ['error', 'warn', 'log', 'verbose', 'debug'];
 
