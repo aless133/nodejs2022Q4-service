@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DBService } from '../common/db.service';
+import { DBService } from 'src/db/db.service';
 import { Album, AlbumDto } from './albums.dto';
 import { CrudService } from 'src/common/crud.service';
 
@@ -13,9 +13,13 @@ export class AlbumsService extends CrudService<Album, AlbumDto> {
     return 'albums';
   }
 
-  delete(id: string) {
-    const tracks = this.dbService.getList('tracks', 'albumId', id);
-    tracks.forEach((track) => this.dbService.update('tracks', track.id, { albumId: null }));
-    return this.dbService.delete('albums', id);
+  async delete(id: string) {
+    return await this.dbService.delete('albums', id, async (album: Album) => {
+      const tracks = await album.tracks;
+      if (tracks)
+        await Promise.all(
+          tracks.map(async (track) => await this.dbService.update('tracks', track.id, { albumId: null })),
+        );
+    });
   }
 }

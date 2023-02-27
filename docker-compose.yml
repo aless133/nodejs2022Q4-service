@@ -1,0 +1,43 @@
+version: '3.9'
+services:
+  api:
+    build: .
+    image: alessandro133/rest-service-api
+    networks:
+      - rest-network      
+    ports:
+      - "$PORT:$PORT"
+    restart: on-failure
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      - POSTGRES_HOST=database
+    volumes:
+      - ./src:/usr/app/src
+    command: ["npm", "run", "start:dev"]
+
+  database:
+    build: ./database
+    image: alessandro133/rest-service-database
+    networks:
+      - rest-network      
+    ports:
+      - "$POSTGRES_PORT:$POSTGRES_PORT"   
+    restart: on-failure 
+    volumes:
+      - ./database/data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=$POSTGRES_DB
+      - POSTGRES_USER=$POSTGRES_USER
+      - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 5s
+      timeout: 5s
+      retries: 5      
+    command: ["postgres", "-c", "logging_collector=on", "-c", "log_statement=all"]
+networks:
+  rest-network:
+    driver: bridge
+

@@ -1,38 +1,45 @@
 import { Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
-import { DBService } from '../common/db.service';
+import { DBService } from 'src/db/db.service';
+import { FavsTable, FavsEntity } from 'src/favs/favs.dto';
 
 @Injectable()
 export class FavsService {
   constructor(readonly dbService: DBService) {}
 
-  getAll() {
+  async getAll() {
+    const favs = await this.dbService.getFavs();
     const all = {
-      artists: this.dbService.getList('artists', 'id', this.dbService.getFavs('artists')),
-      albums: this.dbService.getList('albums', 'id', this.dbService.getFavs('albums')),
-      tracks: this.dbService.getList('tracks', 'id', this.dbService.getFavs('tracks')),
+      artists: [],
+      albums: [],
+      tracks: [],
     };
+    for (const fav of favs) {
+      if (fav.table == 'artists') all.artists.push(await fav.artist);
+      if (fav.table == 'albums') all.albums.push(await fav.album);
+      if (fav.table == 'tracks') all.tracks.push(await fav.track);
+    }
     return all;
   }
 
-  add(table: string, id: string) {
+  async add(table: FavsTable, id: string) {
     let obj;
     try {
-      obj = this.dbService.get(table, id);
+      obj = await this.dbService.get(table, id);
     } catch (err) {
       if (err instanceof NotFoundException) throw new UnprocessableEntityException();
       else throw err;
     }
     if (obj) {
-      const favs = this.dbService.getFavs(table);
-      if (!favs.includes(id)) this.dbService.addFavs(table, id);
+      const fav = await this.dbService.getFav(table, id);
+      if (!fav) return this.dbService.addFav(table, id);
     }
   }
 
-  delete(table: string, id: string) {
-    const obj = this.dbService.get(table, id);
+  async delete(table: FavsTable, id: string) {
+    const obj = await this.dbService.get(table, id);
     if (obj) {
-      const favs = this.dbService.getFavs(table);
-      if (favs.includes(id)) this.dbService.deleteFavs(table, id);
+      const fav = await (obj as FavsEntity).fav;
+      if (fav) return this.dbService.deleteFav(fav);
       else throw new NotFoundException();
     }
   }

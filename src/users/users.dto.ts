@@ -1,15 +1,25 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 import { Exclude } from 'class-transformer';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
+@Entity({ name: 'users' })
 export class User {
+  @PrimaryGeneratedColumn('uuid')
   id: string; // uuid v4
+  @Column()
   login: string;
 
+  @Column()
   @Exclude()
   password: string;
 
+  @Column()
   version: number; // integer number, increments on update
+
+  @Column({ type: 'int8' })
   createdAt: number; // timestamp of creation
+
+  @Column({ type: 'int8' })
   updatedAt: number; // timestamp of last update
 
   constructor(partial: Partial<User>) {

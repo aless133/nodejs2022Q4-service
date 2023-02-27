@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DBService } from './db.service';
+import { DBService } from 'src/db/db.service';
 
 @Injectable()
 export abstract class CrudService<T, CreateT> {
@@ -7,23 +7,23 @@ export abstract class CrudService<T, CreateT> {
 
   abstract getTable(): string;
 
-  getAll(): T[] {
-    return this.dbService.getAll(this.getTable());
+  async getAll() {
+    return await this.dbService.getAll(this.getTable());
   }
 
-  get(id: string): T {
+  async get(id: string) {
     return this.dbService.get(this.getTable(), id);
   }
 
-  create(data: CreateT): T {
-    return this.dbService.create(this.getTable(), data);
+  async create(data: CreateT) {
+    return await this.dbService.create(this.getTable(), data);
   }
 
-  update(id: string, data: Partial<T>): T {
-    return this.dbService.update(this.getTable(), id, data);
+  async update(id: string, data: Partial<T>) {
+    return await this.dbService.update(this.getTable(), id, data);
   }
 
-  delete(id: string) {
-    return this.dbService.delete(this.getTable(), id);
+  async delete(id: string) {
+    return await this.dbService.delete(this.getTable(), id);
   }
 }

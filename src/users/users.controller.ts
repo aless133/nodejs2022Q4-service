@@ -16,7 +16,7 @@ export class UsersController extends CrudController<User, UserCreateDto, UserUpd
   }
 
   @Put(':id')
-  update(@Param('id', ParseUUIDPipe) id: string, @Body() data: UserUpdateDto): User {
+  update(@Param('id', ParseUUIDPipe) id: string, @Body() data: UserUpdateDto) {
     return this.dataService.updatePassword(id, data);
   }
 }
