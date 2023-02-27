@@ -9,4 +9,13 @@ export class AppController {
   getHello(): string {
     return this.appService.getHello();
   }
+
+  @Get('test/exception')
+  testException() {
+    throw new Error('Test Exception');
+  }
+  @Get('test/reject')
+  testReject() {
+    Promise.reject('Test Reject');
+  }
 }

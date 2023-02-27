@@ -40,7 +40,7 @@ export class DBService {
     return await this.repos[table].find();
   }
 
-  async getList(table: string, field: string, find: string | number | string[] | number[]) {
+  async getBy(table: string, field: string, find: string | number | string[] | number[]) {
     if (isArray(find)) {
       const castedFind = find as (string | number)[];
       return await this.repos[table].find({ where: { [field]: In(castedFind) } });
